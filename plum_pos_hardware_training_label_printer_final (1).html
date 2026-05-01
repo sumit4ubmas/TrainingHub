@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plum POS — Hardware, Peripheral & Connections Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plum:#6d28d9;--plum-l:#ede9fe;--plum-d:#4c1d95;--plum-m:#7c3aed;
+  --green:#059669;--green-l:#d1fae5;--green-d:#065f46;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --red:#dc2626;--red-l:#fee2e2;
+  --blue:#2563eb;--blue-l:#dbeafe;
+  --teal:#0891b2;--teal-l:#cffafe;
+  --bg:#faf9f7;--surface:#fff;
+  --border:#e8e4f0;--border-s:#d0c9e8;
+  --text:#1a1520;--text2:#4a4360;--text3:#8b82a8;
+  --r:12px;--rs:8px;
+  --sh:0 1px 4px rgba(109,40,217,.07),0 4px 16px rgba(109,40,217,.05);
+  --sh2:0 1px 3px rgba(109,40,217,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;min-height:100vh}
+.shell{max-width:920px;margin:0 auto;padding:2rem 1.25rem 5rem}
+.hdr{background:linear-gradient(135deg,#3b0764 0%,#6d28d9 55%,#7c3aed 100%);color:#fff;border-radius:18px;padding:2.5rem 2rem 2.25rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:-40px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hdr-tag{display:inline-block;background:rgba(255,255,255,.18);color:rgba(255,255,255,.9);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 12px;border-radius:999px;margin-bottom:10px;border:1px solid rgba(255,255,255,.2)}
+.hdr h1{font-size:28px;font-weight:700;color:#fff;margin-bottom:6px;position:relative}
+.hdr p{font-size:14px;color:rgba(255,255,255,.72);margin-bottom:1.5rem;position:relative}
+.hdr-meta{display:flex;gap:1.25rem;flex-wrap:wrap}
+.hdr-meta span{font-size:13px;color:rgba(255,255,255,.6)}
+.hdr-meta strong{color:rgba(255,255,255,.95);font-weight:500}
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--sh2);position:sticky;top:10px;z-index:9}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-top span{font-size:13px;color:var(--text2)}
+.prog-top strong{font-size:13px;font-weight:600;color:var(--plum)}
+.prog-track{height:6px;background:#eeecea;border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--plum),var(--plum-m));border-radius:999px;transition:width .35s}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab{padding:7px 13px;border-radius:999px;border:1px solid var(--border-s);background:var(--surface);color:var(--text2);font-family:'Sora',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s}
+.tab:hover{border-color:var(--plum);color:var(--plum)}
+.tab.active{background:var(--plum);border-color:var(--plum);color:#fff}
+.tab.done{border-color:var(--plum);color:var(--plum);background:var(--plum-l)}
+.sec{display:none;animation:fi .3s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.mhdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.micon{width:50px;height:50px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.minfo{flex:1}
+.minfo h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
+.minfo p{font-size:13px;color:var(--text2)}
+.timer-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;background:var(--amber-l);color:var(--amber);font-size:12px;font-weight:600;margin-top:6px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh2)}
+.card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+.card h4{font-size:13px;font-weight:600;margin:12px 0 6px;color:var(--text)}
+.tip,.warn,.success,.plum-box{border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;line-height:1.6}
+.tip{background:var(--blue-l);border-left:3px solid var(--blue);color:#1e3a8a}
+.warn{background:var(--amber-l);border-left:3px solid var(--amber);color:#78350f}
+.success{background:var(--green-l);border-left:3px solid var(--green);color:var(--green-d)}
+.plum-box{background:var(--plum-l);border-left:3px solid var(--plum);color:var(--plum-d)}
+.hw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.hw-card{border:1px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--surface)}
+.hw-img-wrap{width:100%;height:158px;display:flex;align-items:center;justify-content:center;background:#f7f5fc;border-radius:var(--rs);margin-bottom:10px;overflow:hidden}
+.hw-img-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+.hw-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px}
+.hw-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.hw-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.badge-core{background:var(--plum-l);color:var(--plum-d)}
+.badge-periph{background:var(--teal-l);color:#164e63}
+.ftable{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+.ftable th{background:#f5f3fb;padding:9px 13px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.ftable td{padding:12px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.55}
+.ftable tr:hover td{background:#faf8ff}
+.step-block{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--plum);color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.steplbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.flow .box{background:#f5f3fb;border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center;font-size:12px;color:var(--text2)}
+.flow .box strong{display:block;color:var(--plum-d);font-size:13px;margin-bottom:4px}
+.script{background:#f5f3fb;border:1px solid var(--border-s);border-radius:var(--rs);padding:14px 16px;margin:10px 0;font-size:14px;color:var(--text);line-height:1.8;font-style:italic}
+.slbl{font-family:'DM Mono',monospace;font-size:10px;font-style:normal;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px}
+.nav-row{display:flex;gap:10px;justify-content:flex-end;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.btn-next,.btn-prev,.btn-submit,.btn-retry{padding:9px 22px;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-next,.btn-submit{background:var(--plum);color:#fff;border:none}
+.btn-next:hover,.btn-submit:hover{background:var(--plum-d)}
+.btn-prev{background:var(--surface);color:var(--text2);border:1px solid var(--border-s)}
+.q-part-hdr{background:var(--plum-l);border-radius:var(--rs);padding:10px 14px;margin:1.5rem 0 1rem;font-size:13px;color:var(--plum-d)}
+.qnum{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.qtext{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5}
+.qwrap{margin-bottom:1.5rem}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:6px;text-align:left;width:100%;line-height:1.5}
+.opt:hover{border-color:var(--plum);background:var(--plum-l)}
+.opt.sel{border-color:var(--plum);background:var(--plum-l);color:var(--plum-d)}
+.opt.correct{border-color:var(--green);background:var(--green-l);color:#064e3b}
+.opt.wrong{border-color:var(--red);background:var(--red-l);color:#7f1d1d}
+.radio{width:17px;height:17px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;margin-top:1px}
+.radio.on{border-color:var(--plum);background:var(--plum)}
+.qfb{font-size:13px;padding:9px 13px;border-radius:var(--rs);margin-top:6px;display:none;line-height:1.55}
+.qfb.ok{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green)}
+.qfb.bad{background:var(--red-l);color:#7f1d1d;border-left:3px solid var(--red)}
+.cert{text-align:center;padding:3rem 2rem;border:1px solid var(--border);border-radius:var(--r);margin-top:1.5rem;background:var(--surface)}
+.cert-badge{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 1.25rem}
+.cert-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.score-big{font-size:52px;font-weight:700;margin:.5rem 0}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-size:12px;font-weight:700}
+.pill-p{background:var(--plum-l);color:var(--plum-d)}
+.pill-a{background:var(--amber-l);color:var(--amber)}
+.btn-retry{margin-top:1.25rem;background:var(--amber);color:#fff;border:none}
+
+.mock-shot{border:1px solid var(--border);border-radius:var(--rs);background:#fbfafc;padding:14px;margin:12px 0;box-shadow:var(--sh2)}
+.mock-title{font-size:11px;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:8px}
+.label-mock{max-width:360px;background:#fff;border:2px dashed #bbb;border-radius:8px;padding:12px;font-size:12px;line-height:1.45;color:#111}
+.label-row{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:3px 0}
+.label-items{margin-top:8px;padding-left:16px}
+.drawer-mock{max-width:420px;background:#f7f7f7;border:1px solid #ddd;border-radius:10px;padding:14px}
+.till-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+.till-cell{background:#fff;border:1px solid #ccc;border-radius:6px;height:38px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#555}
+
+@media(max-width:650px){.hw-grid,.flow{grid-template-columns:1fr}.hdr h1{font-size:21px}.ftable{font-size:12px}.prog-wrap{position:static}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<div class="hdr">
+  <div class="hdr-tag">Plum POS — Sales Rep Training</div>
+  <h1>POS Hardware, Peripherals & Connections</h1>
+  <p>Interactive learning module for POS Terminal, Handheld, Kiosk, Printer, Cash Drawer, KDS, payments, and device connectivity.</p>
+  <div class="hdr-meta">
+    <span>⏱ <strong>35 minutes</strong></span>
+    <span>📚 <strong>6 modules</strong></span>
+    <span>🔌 <strong>Connection basics</strong></span>
+    <span>🎓 <strong>Certification quiz</strong></span>
+  </div>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-top"><span id="progLabel">Module 1 of 7</span><strong id="progPct">14%</strong></div>
+  <div class="prog-track"><div class="prog-fill" id="progBar" style="width:14%"></div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="goTo(0)">1 · POS Basics</button>
+  <button class="tab" onclick="goTo(1)">2 · Terminal</button>
+  <button class="tab" onclick="goTo(2)">3 · Handheld & Kiosk</button>
+  <button class="tab" onclick="goTo(3)">4 · Printers & Drawer</button>
+  <button class="tab" onclick="goTo(4)">5 · KDS & Kitchen</button>
+  <button class="tab" onclick="goTo(5)">6 · Connections</button>
+  <button class="tab" onclick="goTo(6)">📋 Quiz</button>
+</div>
+
+<section class="sec active" id="s0">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">🧾</div>
+    <div class="minfo">
+      <h2>POS Ecosystem Basics</h2>
+      <p>Understand the full system before selling individual devices.</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>What is a POS system?</h3>
+    <div class="plum-box"><strong>Point of Sale</strong> is where orders, payments, receipts, kitchen routing, reporting, and customer data come together.</div>
+    <p>For restaurants, the POS is not just a cash register. It is the operational hub that connects front counter, servers, kitchen, payment devices, online ordering, loyalty, and reporting.</p>
+  </div>
+
+  <div class="card">
+    <h3>Typical restaurant POS flow</h3>
+    <div class="flow">
+      <div class="box"><strong>1. Order</strong>Terminal, handheld, kiosk, online</div>
+      <div class="box"><strong>2. Route</strong>KDS or kitchen printer</div>
+      <div class="box"><strong>3. Prepare</strong>Kitchen completes order</div>
+      <div class="box"><strong>4. Pay</strong>Cash, card, tap, gift card</div>
+      <div class="box"><strong>5. Report</strong>Sales, labor, EOD reports</div>
+    </div>
+    <div class="tip">Sales rep takeaway: Always explain POS as a connected ecosystem, not one single device.</div>
+  </div>
+
+  <div class="card">
+    <h3>Main hardware categories</h3>
+    <div class="hw-grid">
+      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">POS Terminal</div><div class="hw-desc">Main order entry and management device.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">Handheld POS</div><div class="hw-desc">Portable device for tableside ordering and payment.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">Self-Ordering Kiosk</div><div class="hw-desc">Customer-facing device for self-service and upsells.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">KDS</div><div class="hw-desc">Kitchen screen to manage order preparation.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Printer</div><div class="hw-desc">Prints customer receipts and kitchen tickets.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Label Printer</div><div class="hw-desc">Prints item labels for prepared products, expo, and order accuracy.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Cash Drawer</div><div class="hw-desc">Secure cash storage, usually triggered through the printer.</div></div>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="goTo(1)">Next: POS Terminal →</button></div>
+</section>
+
+<section class="sec" id="s1">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--blue-l)">🖥️</div>
+    <div class="minfo">
+      <h2>POS Terminal</h2>
+      <p>The dedicated drive terminal and operational hub.</p>
+      <div class="timer-pill">⏱ 6 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Reference image</h3>
+    <div class="hw-img-wrap" style="height:260px"><img src="https://plumpos.com/assets/images/pages/home_slider/POS-Terminal-799-3c32e26a5.webp" alt="Plum POS Terminal"></div>
+  </div>
+
+  <div class="card">
+    <h3>What it is and how it is used</h3>
+    <ul style="padding-left:18px">
+      <li><strong>Core of the POS system:</strong> main device where cashier or manager operates the restaurant order flow.</li>
+      <li><strong>Order taking:</strong> enter dine-in, takeout, delivery, pickup, modifiers, discounts, taxes, and payment type.</li>
+      <li><strong>Receipt printing:</strong> sends customer receipt to receipt printer and order chits to kitchen printer when configured.</li>
+      <li><strong>Payment control:</strong> connects with payment terminal/card reader for swipe, chip, tap, Apple Pay, Google Pay, and gift card transactions.</li>
+      <li><strong>Table management:</strong> manage table status, check status, split checks, move checks, and close checks.</li>
+      <li><strong>Employee login:</strong> staff usually log in using PIN/credentials; permissions control what they can access.</li>
+      <li><strong>Shift change:</strong> staff can clock in/out, change users, or switch roles based on permissions.</li>
+      <li><strong>Reports:</strong> shift report, server report, end-of-day report, sales summary, payment summary, and online order visibility.</li>
+      <li><strong>Peripheral hub:</strong> Usually acts as the main connection point for receipt printer, drawer, payment terminal, scanner, and kitchen routing.</li>
+      <li><strong>Operational control:</strong> Managers can use it for refunds, discounts, table changes, employee access, and shift closeout.</li>
+    </ul>
+    <div class="success">Advantage: Terminal hardware is designed to run restaurant operations reliably all day and acts as the central hub for connected peripherals.</div>
+  </div>
+
+  <div class="card">
+    <h3>Common connections</h3>
+    <table class="ftable">
+      <thead><tr><th>Device</th><th>Usual connection</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Receipt printer</td><td>USB or Ethernet</td><td>Print customer receipt</td></tr>
+        <tr><td>Cash drawer</td><td>RJ cable through printer</td><td>Opens after cash transaction</td></tr>
+        <tr><td>Payment terminal</td><td>Network / USB / Bluetooth depending setup</td><td>Take card or contactless payment</td></tr>
+        <tr><td>Kitchen printer / KDS</td><td>LAN / Wi-Fi</td><td>Send order to kitchen</td></tr>
+        <tr><td>Barcode scanner</td><td>USB / Bluetooth</td><td>Scan retail or packaged items</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="script"><span class="slbl">Sales pitch</span>"The POS terminal is your restaurant command center. Orders, payments, printers, cash drawer, online orders, and reports all connect here so your team can run the shift from one place."</div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(0)">← Back</button><button class="btn-next" onclick="goTo(2)">Next: Handheld & Kiosk →</button></div>
+</section>
+
+<section class="sec" id="s2">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--green-l)">📱</div>
+    <div class="minfo">
+      <h2>Handheld POS & Self-Ordering Kiosk</h2>
+      <p>Mobile ordering and customer self-service devices.</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Handheld POS / Tablet</h3>
+    <div class="hw-img-wrap" style="height:240px"><img src="https://plumpos.com/assets/images/pages/home_slider/Handheld-restaurant-POS-system-799-1cdb44857.webp" alt="Plum Handheld POS"></div>
+    <div class="plum-box"><strong>What it is:</strong> A portable POS device used by servers to take orders and payments directly at the table, patio, bar, or anywhere in the restaurant.</div>
+    <ul style="padding-left:18px">
+      <li><strong>Best fit:</strong> Fine dining, full-service restaurants, bars, patios, and busy dining rooms where staff move between tables.</li>
+      <li><strong>Order at table:</strong> Server enters the order directly into POS instead of writing it on paper and re-entering it later.</li>
+      <li><strong>Better order accuracy:</strong> No manual lecture/waiter writing errors; the order is captured in POS and routed immediately.</li>
+      <li><strong>Table payment:</strong> Customer can pay at the table using tap, swipe, chip, Apple Pay, Google Pay, or other supported payment methods.</li>
+      <li><strong>Built-in card read/payment flow:</strong> Credit card can be read at the table, reducing the need to carry the card away from the guest.</li>
+      <li><strong>Efficiency:</strong> Server no longer needs to walk back to the terminal for every order or payment.</li>
+      <li><strong>Revenue impact:</strong> Faster service can increase tips, table turnover, and repeat customer experience.</li>
+      <li><strong>Labor impact:</strong> Reduces unnecessary staff movement and helps improve employee retention by making the job easier.</li>
+    </ul>
+    <h4>Usual connections</h4>
+    <ul style="padding-left:18px">
+      <li><strong>Wi-Fi:</strong> primary connection to POS, kitchen routing, and cloud sync.</li>
+      <li><strong>Bluetooth:</strong> can connect to card reader or mobile printer depending on setup.</li>
+      <li><strong>Cloud sync:</strong> order, table, and payment status update in real time.</li>
+    </ul>
+    <div class="success">Sales benefit: The server can take the order, send it to kitchen, and collect payment without leaving the guest — improving speed, accuracy, tips, and customer experience.</div>
+  </div>
+
+  <div class="card">
+    <h3>Self-Ordering Kiosk</h3>
+    <div class="hw-img-wrap" style="height:260px"><img src="https://plumpos.com/assets/images/pages/home_slider/self-service-kiosk-799-d17e10d45.webp" alt="Plum Self Ordering Kiosk"></div>
+    <div class="plum-box"><strong>What it is:</strong> A customer-facing ordering device that lets guests browse the menu, customize items, apply loyalty/discounts, and pay without cashier assistance.</div>
+    <ul style="padding-left:18px">
+      <li><strong>Camera / scan support:</strong> Can be used for loyalty, discounts, QR code, coupons, or customer identification flows where enabled.</li>
+      <li><strong>Payment:</strong> Customer can complete payment directly at the kiosk.</li>
+      <li><strong>Customer efficiency:</strong> Staff can focus on food prep, guest service, and exception handling instead of only taking orders.</li>
+      <li><strong>Visual selling:</strong> Product images, modifiers, and add-ons help push guests toward higher-ticket items.</li>
+      <li><strong>Consistent upsell:</strong> Kiosk does not forget to ask for combo upgrades, drinks, desserts, sauces, or limited-time offers.</li>
+      <li><strong>Marketing value:</strong> Great place to show LTOs, specials, loyalty enrollment, seasonal promos, and high-margin items.</li>
+      <li><strong>Guest control:</strong> Customer can review their order before paying, which reduces misunderstanding and order corrections.</li>
+    </ul>
+    <h4>Usual connections</h4>
+    <ul style="padding-left:18px">
+      <li><strong>Ethernet or Wi-Fi:</strong> connects to POS, menu, cloud, and order routing.</li>
+      <li><strong>Integrated payment device:</strong> supports card/contactless payment depending on setup.</li>
+      <li><strong>Printer/KDS routing:</strong> completed orders are sent automatically to kitchen printer or KDS.</li>
+    </ul>
+    <div class="success">Sales benefit: Kiosk improves customer flow, reduces cashier workload, increases upsell consistency, and creates a strong marketing surface for LTOs and specials.</div>
+  </div>
+
+  <div class="card">
+    <h3>Terminal vs Handheld vs Kiosk</h3>
+    <table class="ftable">
+      <thead><tr><th>Device</th><th>Primary user</th><th>Best use case</th><th>Business value</th></tr></thead>
+      <tbody>
+        <tr><td>POS Terminal</td><td>Cashier / manager</td><td>Counter order, management, reporting</td><td>Main control center</td></tr>
+        <tr><td>Handheld POS</td><td>Server / staff</td><td>Tableside order and payment</td><td>Faster service, fewer errors</td></tr>
+        <tr><td>Kiosk</td><td>Customer</td><td>Self-ordering and payment</td><td>Labor efficiency, upsell, shorter lines</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(1)">← Back</button><button class="btn-next" onclick="goTo(3)">Next: Printer & Drawer →</button></div>
+</section>
+
+<section class="sec" id="s3">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--teal-l)">🖨️</div>
+    <div class="minfo">
+      <h2>Printers, Label Printer & Cash Drawer</h2>
+      <p>Receipts, kitchen chits, product labels, and secure cash handling.</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Thermal Receipt Printer</h3>
+    <div class="hw-img-wrap" style="height:220px"><img src="https://plumpos.com/assets/images/pages/home_slider/POS-terminal-screen-showing-dashboard-and-order-management-799-c33f3949c.webp" alt="POS printer reference"></div>
+    <ul style="padding-left:18px">
+      <li><strong>Customer receipt:</strong> Prints the final receipt for the guest after payment.</li>
+      <li><strong>Thermal technology:</strong> Uses heat-sensitive paper, so there is no ink cartridge to replace.</li>
+      <li><strong>Barcode / QR code:</strong> Can print barcode or QR code for loyalty, receipt lookup, customer message, survey, coupon, or digital receipt flow.</li>
+      <li><strong>Common connections:</strong> Usually connects through USB, Ethernet/network, or Wi-Fi depending on printer model and store setup.</li>
+      <li><strong>Quantity:</strong> Typically one receipt printer per POS terminal at the counter.</li>
+      <li><strong>Reliability:</strong> Commercial thermal printers are generally durable, with expected life span around 3–4 years depending on volume and environment.</li>
+      <li><strong>Cash drawer trigger:</strong> Often sends the signal to open the cash drawer after a cash transaction.</li>
+    </ul>
+    <div class="success">Sales benefit: Reliable receipt printing keeps checkout moving and supports loyalty/marketing messaging directly on the customer receipt.</div>
+  </div>
+
+  <div class="card">
+    <h3>Kitchen & Expo Printer</h3>
+    <ul style="padding-left:18px">
+      <li><strong>Kitchen instructions:</strong> Sends clear order instructions to the kitchen so staff know what to prepare.</li>
+      <li><strong>Environmental impact:</strong> Kitchen heat, moisture, grease, and steam can affect printer life and reliability.</li>
+      <li><strong>Ticket clarity:</strong> Prints item details, modifiers, notes, and customizations such as “No cheese” or special prep instructions for better accuracy.</li>
+      <li><strong>Multi-printer prep station:</strong> A restaurant may use multiple printers so each prep station gets only what it needs — for example grill, salad, bar, pizza, or dessert.</li>
+      <li><strong>Expo prep:</strong> Expo printer can combine all items into a full ticket so the expo team can validate the complete order before handing it to guest or driver.</li>
+      <li><strong>Delivery support:</strong> Helps organize pickup/delivery orders from channels like Uber Eats or other online sources when routed through POS.</li>
+      <li><strong>KDS transition:</strong> Many modern stores are replacing kitchen printers with KDS, but printers are still common as backup or for specific stations.</li>
+    </ul>
+    <div class="tip">Sales rep note: Explain kitchen printers as station-specific instruction tools. Explain KDS as the more modern digital version with better tracking and visibility.</div>
+  </div>
+
+
+  <div class="card">
+    <h3>Label Printer</h3>
+    <div class="plum-box"><strong>What it is:</strong> A dedicated printer that prints adhesive labels for individual products, prepared items, packaged orders, or expo validation.</div>
+
+    <div class="mock-shot">
+      <div class="mock-title">Reference label example</div>
+      <div class="label-mock">
+        <div class="label-row"><strong>Order:</strong><span>#1842</span></div>
+        <div class="label-row"><strong>Name:</strong><span>John S.</span></div>
+        <div class="label-row"><strong>Type:</strong><span>Takeout</span></div>
+        <div class="label-row"><strong>Item:</strong><span>1 of 3</span></div>
+        <ul class="label-items">
+          <li>Burger — no cheese</li>
+          <li>Salad — dressing side</li>
+          <li>Drink — medium</li>
+        </ul>
+        <div style="margin-top:8px;font-size:11px;color:#555">Validated by Expo • 12:42 PM</div>
+      </div>
+    </div>
+
+    <ul style="padding-left:18px">
+      <li><strong>Product identification:</strong> Prints the guest name, order type, item count such as “1 of 3,” product name, and product modifications.</li>
+      <li><strong>Complex order support:</strong> Useful when one order has multiple products like burger, salad, drink, sides, and custom modifications.</li>
+      <li><strong>Kitchen accuracy:</strong> Kitchen can place the label on the product as the item is being made, helping confirm the right product and right modification.</li>
+      <li><strong>Expo validation:</strong> Expo team can review labels to assemble the full order correctly before handoff.</li>
+      <li><strong>Sticker use cases:</strong> Commonly used on burgers, platters, pizza boxes, coffee cups, bakery items, takeout bags, and delivery packaging.</li>
+      <li><strong>Order assembly:</strong> Helps assemble multiple items into one expo ticket/order by matching name, order number, item count, and preparation notes.</li>
+      <li><strong>Server speed:</strong> Makes it faster for servers, runners, or pickup staff to identify the correct order.</li>
+    </ul>
+
+    <h4>Types of label printers</h4>
+    <table class="ftable">
+      <thead><tr><th>Type</th><th>How it works</th><th>Best for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Linerless</strong></td><td>No peeling liner; label size can change based on ticket/item size.</td><td>High-volume food prep, flexible label lengths, less waste.</td></tr>
+        <tr><td><strong>Non-linerless</strong></td><td>Peel-and-stick labels with a fixed label size.</td><td>Standard product labels, simple item stickers, fixed package sizes.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Usual connections</h4>
+    <ul style="padding-left:18px">
+      <li><strong>USB:</strong> direct connection to a terminal or station device.</li>
+      <li><strong>Ethernet / Wi-Fi:</strong> network printer setup for kitchen or expo station routing.</li>
+      <li><strong>POS routing:</strong> Labels print based on menu item, station, or order type configuration.</li>
+    </ul>
+
+    <div class="success">Sales benefit: Label printers improve product accuracy, speed up expo assembly, and reduce wrong-item handoffs for complex orders.</div>
+  </div>
+
+  <div class="card">
+    <h3>Cash Drawer</h3>
+    <div class="plum-box"><strong>What it is:</strong> A secure physical drawer mounted under the counter or cabinet for handling cash transactions during a shift.</div>
+
+    <div class="mock-shot">
+      <div class="mock-title">Reference drawer layout</div>
+      <div class="drawer-mock">
+        <div style="font-size:13px;font-weight:700;color:#333">Cash Drawer / Removable Till</div>
+        <div class="till-grid">
+          <div class="till-cell">$1</div><div class="till-cell">$5</div><div class="till-cell">$10</div><div class="till-cell">$20</div><div class="till-cell">Checks</div>
+          <div class="till-cell">¢</div><div class="till-cell">5¢</div><div class="till-cell">10¢</div><div class="till-cell">25¢</div><div class="till-cell">Safe</div>
+        </div>
+      </div>
+    </div>
+
+    <ul style="padding-left:18px">
+      <li><strong>Connection:</strong> Usually connects through the receipt printer using a drawer cable. The POS sends the signal to the printer, and the printer opens the drawer.</li>
+      <li><strong>Purpose:</strong> Opens only when cash payment is selected or when a permitted “no sale/open drawer” action is performed.</li>
+      <li><strong>Mounting:</strong> Typically mounted under the counter or inside a cabinet for better security and cleaner counter space.</li>
+      <li><strong>Lock:</strong> Includes a physical lock/key so cash can be secured if power or printer connection is unavailable.</li>
+      <li><strong>Removable till:</strong> Usually includes a plastic till insert that can be removed at shift close and taken to the office or safe for counting.</li>
+      <li><strong>Multiple tills:</strong> A store may use several tills that are stored safely and assigned to employees or shifts.</li>
+      <li><strong>Shift process:</strong> Employee starts the shift with a till, uses it during transactions, then removes it after logout/shift close for counting.</li>
+      <li><strong>Accountability:</strong> Assigning a till to an employee improves cash accountability and helps identify shortages or overages.</li>
+      <li><strong>Reporting:</strong> Drawer activity supports end-of-day reconciliation, cash expected vs actual, paid-in/paid-out, and no-sale tracking.</li>
+    </ul>
+
+    <div class="warn">Common troubleshooting: If the drawer does not open, check printer power, printer connection, drawer cable, drawer assignment, and cash drawer settings inside POS.</div>
+  </div>
+
+  <div class="card">
+    <h3>Printer & drawer connection flow</h3>
+    <div class="flow">
+      <div class="box"><strong>POS</strong>Cash sale closed</div>
+      <div class="box"><strong>Printer</strong>Receives print signal</div>
+      <div class="box"><strong>Drawer</strong>Receives kick signal</div>
+      <div class="box"><strong>Label</strong>Prints item/order sticker</div>
+      <div class="box"><strong>Report</strong>Cash sale recorded</div>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(2)">← Back</button><button class="btn-next" onclick="goTo(4)">Next: KDS →</button></div>
+</section>
+
+<section class="sec" id="s4">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--amber-l)">👨‍🍳</div>
+    <div class="minfo">
+      <h2>Kitchen Display System (KDS)</h2>
+      <p>Digital kitchen workflow and order accuracy.</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Reference image</h3>
+    <div class="hw-img-wrap" style="height:260px"><img src="https://plumpos.com/assets/images/pages/home_slider/Kitchen-display-system-integrated-with-restaurant-POS-system-for-order-management-527-9dbbc3606.webp" alt="Kitchen Display System"></div>
+  </div>
+
+  <div class="card">
+    <h3>What it is and how it is used</h3>
+    <ul style="padding-left:18px">
+      <li>Digital screen used by kitchen staff to view incoming orders.</li>
+      <li>Replaces or supplements kitchen paper tickets.</li>
+      <li>Orders can be sorted by time, station, priority, or fulfillment type.</li>
+      <li>Kitchen can bump/complete orders when finished.</li>
+      <li>Helps track prep time, late orders, and kitchen bottlenecks.</li>
+      <li>Improves order accuracy because modifiers and notes are visible and organized.</li>
+      <li>Can replace many kitchen/expo printer workflows in modern stores.</li>
+      <li>Expo can use KDS to validate the full order before it is handed to guest, server, or delivery driver.</li>
+    </ul>
+    <div class="success">Sales benefit: No lost tickets, less confusion, faster kitchen communication, and stronger visibility than paper-only printer workflows.</div>
+  </div>
+
+  <div class="card">
+    <h3>KDS use cases</h3>
+    <table class="ftable">
+      <thead><tr><th>Restaurant type</th><th>KDS value</th></tr></thead>
+      <tbody>
+        <tr><td>QSR</td><td>Fast prep queue, order timers, station routing</td></tr>
+        <tr><td>Full service</td><td>Course timing, table order visibility, expo control</td></tr>
+        <tr><td>Pizza</td><td>Track make-line, oven, cut-table flow</td></tr>
+        <tr><td>Delivery heavy</td><td>Separate delivery/pickup order queue and timing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="script"><span class="slbl">Sales pitch</span>"The KDS gives your kitchen one clean view of every order. No lost paper, no guessing, and every order can be tracked from received to completed."</div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(3)">← Back</button><button class="btn-next" onclick="goTo(5)">Next: Connections →</button></div>
+</section>
+
+<section class="sec" id="s5">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">🔌</div>
+    <div class="minfo">
+      <h2>Connection Types & Troubleshooting</h2>
+      <p>How POS devices usually communicate.</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Connection types</h3>
+    <table class="ftable">
+      <thead><tr><th>Connection</th><th>Usually used for</th><th>Best explanation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>USB</strong></td><td>Receipt printer, label printer, scanner, local peripherals</td><td>Direct wired connection; simple and reliable.</td></tr>
+        <tr><td><strong>Ethernet / LAN</strong></td><td>KDS, kitchen printer, label printer, terminal network</td><td>Wired network; best for stability.</td></tr>
+        <tr><td><strong>Wi-Fi</strong></td><td>Handheld, tablet, kiosk, KDS</td><td>Wireless connection; flexible but depends on network quality.</td></tr>
+        <tr><td><strong>Bluetooth</strong></td><td>Card reader, mobile printer, scanner</td><td>Short-range wireless connection.</td></tr>
+        <tr><td><strong>Cloud</strong></td><td>Reporting, menu sync, online orders</td><td>Data syncing and remote access.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Recommended restaurant network setup</h3>
+    <div class="step-block"><span class="stepn">1</span><div><div class="steplbl">Stable internet</div>Use business-grade internet where possible. POS depends on reliable connectivity for cloud sync and online orders.</div></div>
+    <div class="step-block"><span class="stepn">2</span><div><div class="steplbl">Wired where possible</div>Use Ethernet for kitchen printers and KDS if the location supports it.</div></div>
+    <div class="step-block"><span class="stepn">3</span><div><div class="steplbl">Strong Wi-Fi</div>Handhelds and kiosks need strong Wi-Fi coverage across dining area, counter, patio, and kitchen pass-through.</div></div>
+    <div class="step-block"><span class="stepn">4</span><div><div class="steplbl">Device naming</div>Name devices clearly: Front Printer, Kitchen Printer, Expo KDS, Bar KDS, Handheld 1, etc.</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Common troubleshooting checklist</h3>
+    <ul style="padding-left:18px">
+      <li>Device powered on?</li>
+      <li>Connected to correct Wi-Fi or Ethernet?</li>
+      <li>Printer has paper and lid closed?</li>
+      <li>Cash drawer cable connected to printer?</li>
+      <li>Label printer has labels loaded and correct label size?</li>
+      <li>Payment device paired/online?</li>
+      <li>KDS assigned to correct kitchen station?</li>
+      <li>Menu item configured to route to correct printer/KDS?</li>
+    </ul>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(4)">← Back</button><button class="btn-next" onclick="goTo(6)">Start Quiz →</button></div>
+</section>
+
+<section class="sec" id="s6">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--green-l)">🎓</div>
+    <div class="minfo">
+      <h2>Certification Quiz</h2>
+      <p>Pass score: 80%. Enter trainee details first, then start the quiz.</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="card" id="quizGate">
+    <h3>Trainee Details</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Please enter the trainee name and email ID before starting the certification quiz.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label for="traineeName" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Full Name <span style="color:var(--red)">*</span></label>
+        <input id="traineeName" type="text" placeholder="Enter full name" oninput="validateTraineeGate()" style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+      <div>
+        <label for="traineeEmail" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Email ID <span style="color:var(--red)">*</span></label>
+        <input id="traineeEmail" type="email" placeholder="Enter email address" oninput="validateTraineeGate()" style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+    </div>
+    <div id="traineeGateMsg" class="warn" style="display:none;margin-top:12px;">Please enter both full name and a valid email ID.</div>
+    <button type="button" id="startQuizBtn" class="btn-next" style="margin-top:14px;" onclick="startQuizAccess()" disabled>Start Quiz</button>
+    
+  </div>
+
+  <div id="quizContent" style="display:none;">
+    <div class="q-part-hdr"><strong>POS Hardware & Connections</strong>Answer all questions, then submit.</div>
+    <div id="quiz"></div>
+    <button class="btn-submit" id="submitQuizBtn" onclick="submitQuiz()">Submit Quiz</button>
+    <div id="certResult"></div>
+  </div>
+
+  <div class="nav-row"><button class="btn-prev" onclick="goTo(5)">← Back</button></div>
+</section>
+
+</div>
+
+<script>
+// ================= GOOGLE SHEETS CONFIG =================
+// 1) Create the Apps Script from the code included below in this file.
+// 2) Deploy it as Web App.
+// 3) This file is already using the same Apps Script Web App URL from the original POS training HTML.
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznUkd-er7518oClTj1mqDLvsAcgybvCzurByPdzmbExhMcvIPJdee2wcjjJPuXcO1W/exec";
+
+// When true, progress is saved each time trainee moves modules. Quiz result is always saved on submit.
+const TRACK_MODULE_PROGRESS = false;
+// =========================================================
+
+let current = 0;
+let moduleProgressSaved = {};
+
+const total = 7;
+const tabs = document.querySelectorAll('.tab');
+const secs = document.querySelectorAll('.sec');
+
+
+function getTraineePayload(extra={}){
+  const name = document.getElementById('traineeName')?.value?.trim() || '';
+  const email = document.getElementById('traineeEmail')?.value?.trim() || '';
+  return {
+    timestamp: new Date().toISOString(),
+    name: name,
+    email: email,
+    traineeName: name,
+    traineeEmail: email,
+    trainingName: 'Plum POS — Hardware, Peripheral & Connections Training',
+    quizName: 'Hardware & Peripheral Certification Quiz',
+    courseName: 'Plum POS Hardware, Peripheral & Connections Training',
+    ...extra
+  };
+}
+
+async function saveToGoogleSheets(payload){
+  if(!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes('PASTE_YOUR')){
+    console.log('Google Sheets not connected yet. Payload:', payload);
+    return {ok:false, reason:'missing_url'};
+  }
+  try{
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(payload)
+    });
+    return {ok:true};
+  }catch(err){
+    console.error('Google Sheets save failed:', err);
+    return {ok:false, reason:err.message};
+  }
+}
+
+function saveModuleProgress(i){
+  if(!TRACK_MODULE_PROGRESS) return;
+  if(moduleProgressSaved[i]) return;
+  moduleProgressSaved[i] = true;
+  saveToGoogleSheets(getTraineePayload({
+    eventType:'Module Progress',
+    moduleNumber:i+1,
+    moduleName: tabs[i]?.textContent?.trim() || '',
+    progressPercent: Math.round(((i+1)/total)*100)
+  }));
+}
+
+function goTo(i){
+  current = i;
+  secs.forEach((s,idx)=>s.classList.toggle('active',idx===i));
+  tabs.forEach((t,idx)=>{
+    t.classList.toggle('active',idx===i);
+    if(idx<i) t.classList.add('done'); else t.classList.remove('done');
+  });
+  const pct = Math.round(((i+1)/total)*100);
+  document.getElementById('progLabel').textContent = i===6 ? 'Certification Quiz' : `Module ${i+1} of ${total}`;
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+  saveModuleProgress(i);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const questions = [
+  {q:'What is the primary use of a label printer in restaurant POS operations?', a:['To print employee schedules only','To print product/order labels with guest name, item count, modifications, and assembly details','To open the cash drawer','To replace Wi-Fi'], c:1, ex:'Label printers help identify products, modifications, order type, and item counts for accurate prep and expo assembly.'},
+  {q:'What is the POS Terminal best described as?', a:['A kitchen-only display','The main operational hub for orders, payments, reports, and connected devices','Only a cash drawer controller','A customer loyalty camera'], c:1, ex:'The terminal is the main control center for orders, payments, reporting, and peripherals.'},
+  {q:'Which device is best for tableside ordering and payment?', a:['Kitchen Printer','Handheld POS / Tablet','Cash Drawer','Back office router'], c:1, ex:'Handheld POS lets staff take orders and payments at the table.'},
+  {q:'What is a key benefit of a self-ordering kiosk?', a:['It removes all reporting','It consistently prompts upsells and reduces counter wait time','It only prints kitchen tickets','It replaces internet service'], c:1, ex:'Kiosks help with speed, self-service, visual menus, and consistent upsells.'},
+  {q:'How is a cash drawer usually triggered to open?', a:['Through the receipt printer after a cash sale','By the KDS screen','By online ordering only','By the customer phone'], c:0, ex:'Most cash drawers connect to the receipt printer, which sends the open/kick signal.'},
+  {q:'What does KDS stand for?', a:['Kitchen Display System','Key Discount Setup','Kiosk Drawer Service','Kitchen Delivery Sheet'], c:0, ex:'KDS means Kitchen Display System.'},
+  {q:'Which connection is usually most stable for kitchen printers and KDS when available?', a:['Bluetooth','Ethernet / LAN','NFC','Gift card swipe'], c:1, ex:'Ethernet/LAN is usually more stable than wireless for fixed kitchen devices.'},
+  {q:'What should you check first if a printer is not printing?', a:['If the device has power, paper, and correct connection','If the restaurant has a dessert menu','If the drawer has coins','If the server has tips'], c:0, ex:'Basic troubleshooting starts with power, paper, lid, and connection.'},
+  {q:'What is the best sales explanation of the POS ecosystem?', a:['One isolated register only','A connected system for orders, kitchen routing, payments, reporting, and customer experience','A printer-only setup','A payment device that does not talk to anything'], c:1, ex:'The value comes from connected front-of-house, kitchen, payments, and reporting.'},
+  {q:'Which device helps reduce lost paper tickets and tracks prep progress?', a:['KDS','Cash drawer','Barcode scanner only','Receipt paper roll'], c:0, ex:'KDS digitally displays and manages kitchen orders.'},
+  {q:'What is a common use of Bluetooth in POS setups?', a:['Short-range connection to card readers, scanners, or mobile printers','Long-distance cloud reporting','Opening restaurant doors','Cooking food'], c:0, ex:'Bluetooth is common for short-range peripheral communication.'}
+];
+
+let answers = {};
+function renderQuiz(){
+  const el = document.getElementById('quiz');
+  el.innerHTML = questions.map((qq,idx)=>`
+    <div class="qwrap" id="q${idx}">
+      <div class="qnum">Question ${idx+1} of ${questions.length}</div>
+      <div class="qtext">${qq.q}</div>
+      ${qq.a.map((o,j)=>`<button class="opt" onclick="selectAnswer(${idx},${j})"><span class="radio"></span><span>${o}</span></button>`).join('')}
+      <div class="qfb"></div>
+    </div>
+  `).join('');
+}
+function selectAnswer(q,a){
+  answers[q]=a;
+  const wrap=document.getElementById('q'+q);
+  wrap.querySelectorAll('.opt').forEach((b,idx)=>{
+    b.classList.toggle('sel',idx===a);
+    b.querySelector('.radio').classList.toggle('on',idx===a);
+  });
+}
+
+function isValidEmail(email){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateTraineeGate(){
+  const name = document.getElementById('traineeName')?.value?.trim() || '';
+  const email = document.getElementById('traineeEmail')?.value?.trim() || '';
+  const ok = !!name && isValidEmail(email);
+  const btn = document.getElementById('startQuizBtn');
+  const msg = document.getElementById('traineeGateMsg');
+  if(btn) btn.disabled = !ok;
+  if(msg) msg.style.display = (!ok && (name || email)) ? 'block' : 'none';
+  return ok;
+}
+
+function startQuizAccess(){
+  if(!validateTraineeGate()){
+    const msg = document.getElementById('traineeGateMsg');
+    if(msg) msg.style.display = 'block';
+    return;
+  }
+  const gate = document.getElementById('quizGate');
+  const content = document.getElementById('quizContent');
+  if(gate) gate.style.display = 'none';
+  if(content) content.style.display = 'block';
+  renderQuiz();
+  saveToGoogleSheets(getTraineePayload({
+    eventType:'Quiz Started',
+    result:'Started',
+    totalQuestions:questions.length
+  }));
+}
+
+function submitQuiz(){
+  if(!validateTraineeGate()){
+    alert('Please enter trainee full name and valid email ID before submitting.');
+    return;
+  }
+  let score=0;
+  questions.forEach((qq,idx)=>{
+    const wrap=document.getElementById('q'+idx);
+    const opts=wrap.querySelectorAll('.opt');
+    opts.forEach((b,j)=>{
+      b.classList.remove('correct','wrong');
+      if(j===qq.c) b.classList.add('correct');
+      if(answers[idx]===j && j!==qq.c) b.classList.add('wrong');
+    });
+    const fb=wrap.querySelector('.qfb');
+    if(answers[idx]===qq.c){score++; fb.className='qfb ok'; fb.textContent='Correct — '+qq.ex;}
+    else {fb.className='qfb bad'; fb.textContent='Review — '+qq.ex;}
+    fb.style.display='block';
+  });
+  const pct=Math.round((score/questions.length)*100);
+  const pass=pct>=80;
+  const traineePayload = getTraineePayload({
+    eventType:'Quiz Result',
+    totalQuestions:questions.length,
+    correctAnswers:score,
+    scorePercent:pct,
+    result:pass ? 'Pass' : 'Fail',
+    passStatus:pass ? 'Passed' : 'Review Needed',
+    answers: questions.map((q, i) => {
+      const chosenIndex = answers[i];
+      const chosenText = chosenIndex !== undefined ? q.a[chosenIndex] : '';
+      const correctText = q.a[q.c];
+      return `Q${i + 1}: ${q.q} | Selected="${chosenText}" | Correct="${correctText}"`;
+    }).join(' || ')
+  });
+  saveToGoogleSheets(traineePayload).then((res)=>{
+    const msg = document.getElementById('sheetSaveMsg');
+    if(msg){
+      msg.textContent = res.ok ? 'Quiz result saved to Google Sheets.' : 'Result could not be saved to Google Sheets. Please check the Apps Script deployment/access.';
+      msg.style.color = res.ok ? 'var(--green-d)' : 'var(--amber)';
+    }
+  });
+
+  document.getElementById('certResult').innerHTML=`
+    <div class="cert">
+      <div class="cert-badge" style="background:${pass?'var(--green-l)':'var(--amber-l)'}">${pass?'🏆':'📚'}</div>
+      <div class="cert-title">${pass?'Certification Passed':'Training Review Needed'}</div>
+      <div class="score-big" style="color:${pass?'var(--green)':'var(--amber)'}">${pct}%</div>
+      <span class="pill ${pass?'pill-p':'pill-a'}">${score} of ${questions.length} correct</span>
+      <div id="sheetSaveMsg" style="font-size:13px;margin-top:10px;color:var(--text3)">Saving progress...</div>
+      <p style="max-width:420px;margin:1rem auto;color:var(--text2);line-height:1.7">
+        ${pass?'Great job. You understand POS hardware, peripherals, and connection basics.':'Please review the highlighted answers and retake the quiz after reviewing the modules.'}
+      </p>
+      <button class="btn-retry" onclick="resetQuiz()">Retake Quiz</button>
+    </div>`;
+}
+function resetQuiz(){
+  answers={};
+  renderQuiz();
+  document.getElementById('certResult').innerHTML='';
+}
+</script>
+
+<!--
+================= GOOGLE APPS SCRIPT CODE =================
+
+Create a Google Sheet with a tab named: Training Progress
+
+Recommended headers in row 1:
+Timestamp | Event Type | Trainee Name | Email | Store | Manager | Course | Module Number | Module Name | Progress % | Score % | Correct | Total | Pass Status | Answers
+
+Then go to Extensions > Apps Script and paste this code:
+
+function doPost(e) {
+  const SHEET_NAME = 'Training Progress';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+    sheet.appendRow([
+      'Timestamp','Event Type','Trainee Name','Email','Store','Manager','Course',
+      'Module Number','Module Name','Progress %','Score %','Correct','Total','Pass Status','Answers'
+    ]);
+  }
+
+  const data = JSON.parse(e.postData.contents);
+
+  sheet.appendRow([
+    data.timestamp || new Date(),
+    data.eventType || '',
+    data.traineeName || '',
+    data.traineeEmail || '',
+    data.traineeStore || '',
+    data.traineeManager || '',
+    data.courseName || '',
+    data.moduleNumber || '',
+    data.moduleName || '',
+    data.progressPercent || '',
+    data.scorePercent || '',
+    data.correctAnswers || '',
+    data.totalQuestions || '',
+    data.passStatus || '',
+    data.answers || ''
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+Deploy:
+1. Click Deploy > New deployment
+2. Select type: Web app
+3. Execute as: Me
+4. Who has access: Anyone
+5. Copy the Web App URL
+6. Paste it into GOOGLE_SCRIPT_URL in this HTML
+
+============================================================
+-->
+
+</body>
+</html>

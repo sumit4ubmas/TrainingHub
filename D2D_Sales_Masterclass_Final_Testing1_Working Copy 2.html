@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Sales Masterclass — Restaurant POS Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green:#0d9e6e; --green-l:#e0f7ef; --green-d:#086e4d;
+  --amber:#d97706; --amber-l:#fef3c7;
+  --red:#dc2626; --red-l:#fee2e2;
+  --blue:#2563eb; --blue-l:#dbeafe;
+  --purple:#7c3aed; --purple-l:#ede9fe;
+  --bg:#f8f7f4; --surface:#ffffff;
+  --border:#e5e2db; --border-s:#ccc9c0;
+  --text:#1a1a18; --text2:#555550; --text3:#888882;
+  --r:12px; --rs:8px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.05);
+  --sh2:0 1px 2px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;min-height:100vh}
+.shell{max-width:800px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+/* HEADER */
+.hdr{background:var(--text);color:#fff;border-radius:16px;padding:2.5rem 2rem 2rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:0;right:0;bottom:0;width:300px;background:linear-gradient(135deg,rgba(13,158,110,.28) 0%,rgba(13,158,110,.04) 100%);pointer-events:none}
+.hdr-tag{display:inline-block;background:rgba(13,158,110,.3);color:#6ee7c7;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 11px;border-radius:999px;margin-bottom:10px}
+.hdr h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:6px}
+.hdr p{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:1.25rem}
+.hdr-meta{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hdr-meta span{font-size:13px;color:rgba(255,255,255,.45)}
+.hdr-meta strong{color:rgba(255,255,255,.85);font-weight:500}
+
+/* PROGRESS */
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--sh2)}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-top span{font-size:13px;color:var(--text2)}
+.prog-top strong{font-size:13px;font-weight:600;color:var(--green)}
+.prog-track{height:6px;background:#eeecea;border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;background:var(--green);border-radius:999px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab{padding:7px 14px;border-radius:999px;border:1px solid var(--border-s);background:var(--surface);color:var(--text2);font-family:'Sora',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .18s}
+.tab:hover{border-color:var(--green);color:var(--green)}
+.tab.active{background:var(--green);border-color:var(--green);color:#fff}
+.tab.done{border-color:var(--green);color:var(--green);background:var(--green-l)}
+
+/* SECTIONS */
+.sec{display:none;animation:fi .3s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODULE HEADER */
+.mhdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.micon{width:48px;height:48px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.minfo{flex:1}
+.minfo h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
+.minfo p{font-size:13px;color:var(--text2)}
+.timer-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;background:var(--amber-l);color:var(--amber);font-size:12px;font-weight:600;margin-top:6px}
+
+/* STAT ROW */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;box-shadow:var(--sh2)}
+.stat-n{font-size:28px;font-weight:700;color:var(--green)}
+.stat-l{font-size:12px;color:var(--text3);margin-top:3px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh2)}
+.card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+
+/* CALLOUTS */
+.tip{background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#1e3a8a;line-height:1.6}
+.warn{background:var(--amber-l);border-left:3px solid var(--amber);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#78350f;line-height:1.6}
+.success{background:var(--green-l);border-left:3px solid var(--green);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:var(--green-d);line-height:1.6}
+.purple-box{background:var(--purple-l);border-left:3px solid var(--purple);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#4c1d95;line-height:1.6}
+
+/* SCRIPT */
+.script{background:#f3f2ee;border:1px solid var(--border-s);border-radius:var(--rs);padding:14px 16px;margin:10px 0;font-size:14px;color:var(--text);line-height:1.8;font-style:italic;position:relative}
+.slbl{font-family:'DM Mono',monospace;font-size:10px;font-style:normal;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px}
+
+/* CHECKLIST */
+.chks{display:flex;flex-direction:column;gap:9px}
+.chk{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)}
+.chk-y::before{content:'✓';color:var(--green);font-weight:700}
+.chk-n::before{content:'✗';color:var(--red);font-weight:700}
+
+/* VS GRID */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.vs-bad{background:var(--red-l);border:1px solid #fca5a5;border-radius:var(--rs);padding:14px;font-size:13.5px;color:#7f1d1d;line-height:1.6}
+.vs-good{background:var(--green-l);border:1px solid #6ee7b7;border-radius:var(--rs);padding:14px;font-size:13.5px;color:#064e3b;line-height:1.6}
+.vslbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+
+/* BRIDGE TABLE */
+.btable{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+.btable th{background:#f3f2ee;padding:9px 13px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.btable td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.55}
+.btable tr:last-child td{border-bottom:none}
+.btable td:first-child{width:44px}
+
+/* ACE TABLE */
+.ace{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.ace-card{border-radius:var(--rs);padding:14px;text-align:center}
+.ace-letter{font-size:32px;font-weight:700;margin-bottom:6px}
+.ace-word{font-size:14px;font-weight:600;margin-bottom:4px}
+.ace-desc{font-size:12.5px;line-height:1.5;opacity:.85}
+
+/* STEP BUBBLE */
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* CHAT BUBBLES */
+.roleplay{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:12px 0}
+.rphdr{background:#f3f2ee;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.rpbody{padding:14px;display:flex;flex-direction:column;gap:5px}
+.clbl{font-size:11px;color:var(--text3);margin-bottom:2px;font-family:'DM Mono',monospace}
+.clbl-r{font-size:11px;color:var(--green-d);margin-bottom:2px;font-family:'DM Mono',monospace;text-align:right}
+.bub{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.6;max-width:83%}
+.bub-them{background:#f3f2ee;color:var(--text);border-radius:4px 12px 12px 12px}
+.bub-rep{background:var(--green);color:#fff;border-radius:12px 4px 12px 12px;margin-left:auto}
+
+/* OBJECTION ROWS */
+.obj-row{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.obj-row:last-child{border-bottom:none}
+.obj-tag{flex-shrink:0;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700;background:var(--amber-l);color:var(--amber);white-space:nowrap;margin-top:2px}
+.obj-body{flex:1}
+.obj-body strong{display:block;font-size:14px;color:var(--text);margin-bottom:5px}
+.obj-body small{display:block;font-size:12.5px;color:var(--text3);margin-top:5px;font-style:italic}
+.reality-tag{display:inline-block;background:#f3f2ee;color:var(--text2);font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;margin-bottom:6px;font-style:normal}
+
+/* STEP BLOCK */
+.step-block{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+.step-block:last-child{margin-bottom:0}
+.steplbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+
+/* PRO TIP CARDS */
+.pro-tips{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.pro-tip{border:1px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--surface)}
+.pro-tip-icon{font-size:22px;margin-bottom:8px}
+.pro-tip h4{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pro-tip p{font-size:13px;color:var(--text2);line-height:1.55}
+
+/* VIDEO SCENARIO TABLE */
+.vid-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+.vid-table th{background:#f3f2ee;padding:9px 13px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.vid-table td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5}
+.vid-table tr:last-child td{border-bottom:none}
+.vid-badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600}
+
+/* QUIZ */
+.qnum{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.qtext{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5}
+.qwrap{margin-bottom:1.75rem}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:6px;text-align:left;width:100%;line-height:1.5}
+.opt:hover{border-color:var(--green);background:var(--green-l)}
+.opt.sel{border-color:var(--green);background:var(--green-l);color:#064e3b}
+.opt.correct{border-color:var(--green);background:var(--green-l);color:#064e3b}
+.opt.wrong{border-color:var(--red);background:var(--red-l);color:#7f1d1d}
+.radio{width:17px;height:17px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.radio.on{border-color:var(--green);background:var(--green)}
+.radio.on::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.radio.err{border-color:var(--red);background:var(--red)}
+.radio.err::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.qfb{font-size:13px;padding:9px 13px;border-radius:var(--rs);margin-top:6px;display:none;line-height:1.55}
+.qfb.ok{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green)}
+.qfb.bad{background:var(--red-l);color:#7f1d1d;border-left:3px solid var(--red)}
+.btn-submit{display:none;padding:12px 28px;background:var(--green);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:.5rem;transition:background .15s}
+.btn-submit:hover{background:var(--green-d)}
+
+/* NAV BUTTONS */
+.nav-row{display:flex;gap:10px;justify-content:flex-end;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.btn-next{padding:9px 22px;background:var(--green);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-next:hover{background:var(--green-d)}
+.btn-prev{padding:9px 22px;background:var(--surface);color:var(--text2);border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
+.btn-prev:hover{border-color:var(--text2);color:var(--text)}
+
+/* CERT */
+.cert{text-align:center;padding:3rem 2rem;border:1px solid var(--border);border-radius:var(--r);margin-top:1.5rem;background:var(--surface)}
+.cert-badge{width:88px;height:88px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 1.25rem}
+.cert-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cert-sub{font-size:14px;color:var(--text2);margin-bottom:.75rem}
+.score-big{font-size:48px;font-weight:700;margin:.5rem 0}
+.pill{display:inline-block;padding:4px 13px;border-radius:999px;font-size:12px;font-weight:700}
+.pill-g{background:var(--green-l);color:var(--green-d)}
+.pill-a{background:var(--amber-l);color:var(--amber)}
+.cert-msg{font-size:14px;color:var(--text2);max-width:360px;margin:1rem auto 0;line-height:1.7}
+.btn-retry{margin-top:1.25rem;padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.quiz-section-lbl{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;padding:8px 0 4px;margin-top:1.5rem;border-top:1px solid var(--border);display:block}
+.quiz-section-lbl:first-child{border-top:none;margin-top:0}
+
+@media(max-width:540px){
+  .vs,.pro-tips,.ace{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(3,1fr)}
+  .hdr h1{font-size:20px}
+  .btable,.vid-table{font-size:12px}
+}
+.cert-neon{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at top left, rgba(120,40,180,.35), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(180,30,120,.28), transparent 28%),
+    linear-gradient(180deg, #140224 0%, #0d0118 100%);
+  border:1px solid rgba(120,70,180,.4);
+  border-radius:18px;
+  padding:42px 28px 36px;
+  color:#f3f3f5;
+}
+
+.cert-neon-frame{
+  position:absolute;
+  inset:8px;
+  border:1.5px solid rgba(167,95,255,.45);
+  pointer-events:none;
+}
+
+.cert-neon-top,
+.cert-neon-bottom{
+  position:absolute;
+  left:38%;
+  width:24%;
+  height:2px;
+  background:linear-gradient(90deg, #c060ff 0%, #b7ff3c 50%, #ff54d8 100%);
+  box-shadow:0 0 12px rgba(183,255,60,.35);
+}
+
+.cert-neon-top{ top:8px; }
+.cert-neon-bottom{ bottom:8px; }
+
+.cert-brand{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:26px;
+  position:relative;
+  z-index:1;
+}
+.cert-brand-logo{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  display:block;
+  filter: drop-shadow(0 0 14px rgba(187,61,255,.35));
+}
+
+.cert-brand-mark{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#bb3dff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 0 18px rgba(187,61,255,.45);
+}
+
+.cert-brand-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:2px solid #fff;
+  position:relative;
+}
+
+.cert-brand-dot::after{
+  content:'';
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:#fff;
+  position:absolute;
+  top:2px;
+  left:2px;
+}
+
+.cert-brand-text{
+  font-size:22px;
+  font-weight:700;
+  color:#fff;
+}
+
+.cert-kicker{
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.18em;
+  color:#a8ff2e;
+  margin-bottom:16px;
+}
+
+.cert-name-neon{
+  text-align:center;
+  font-size:56px;
+  line-height:1.05;
+  font-weight:800;
+  color:#f5f5f7;
+  margin-bottom:14px;
+}
+
+.cert-name-line{
+  width:170px;
+  height:2px;
+  margin:0 auto 22px;
+  background:#a8ff2e;
+  box-shadow:0 0 10px rgba(168,255,46,.35);
+}
+
+.cert-subline{
+  text-align:center;
+  color:#9b93aa;
+  font-size:14px;
+  margin-bottom:28px;
+}
+
+.cert-subline strong{
+  color:#f1f1f4;
+  font-weight:700;
+}
+
+.cert-subline span{
+  color:#8f84a2;
+}
+
+.score-ring-wrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:18px;
+}
+
+.score-ring{
+  width:110px;
+  height:110px;
+  border-radius:50%;
+  padding:6px;
+  background:
+    conic-gradient(#d94cff 0deg, #ffcb52 120deg, #a8ff2e 250deg, #d94cff 360deg);
+  box-shadow:0 0 24px rgba(214,76,255,.18);
+}
+
+.score-ring-inner{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:#140224;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.score-ring-score{
+  font-size:32px;
+  font-weight:800;
+  color:#fff;
+  line-height:1;
+}
+
+.score-ring-pct{
+  font-size:16px;
+  font-weight:700;
+  color:#a8ff2e;
+  line-height:1.1;
+}
+
+.cert-status-pill{
+  display:inline-block;
+  margin:0 auto 28px;
+  padding:6px 16px;
+  border-radius:999px;
+  background:rgba(50,58,22,.75);
+  border:1px solid rgba(168,255,46,.45);
+  color:#a8ff2e;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.04em;
+}
+
+.cert-divider{
+  width:64%;
+  height:1px;
+  background:rgba(105,84,136,.4);
+  margin:0 auto 28px;
+}
+
+.cert-meta-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  max-width:520px;
+  margin:0 auto 20px;
+}
+
+.cert-meta-item{
+  text-align:center;
+}
+
+.cert-meta-label{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.12em;
+  color:#7f7593;
+  margin-bottom:6px;
+}
+
+.cert-meta-value{
+  font-size:20px;
+  font-weight:700;
+  color:#ececf1;
+}
+
+.cert-msg-neon{
+  color:#b1a9c0;
+  max-width:540px;
+}
+
+.cert-download-btn{
+  margin-top:18px;
+}
+
+@media(max-width:640px){
+  .cert-name-neon{
+    font-size:38px;
+  }
+
+  .cert-meta-grid{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+
+  .cert-divider{
+    width:88%;
+  }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="shell">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-tag">D2D Sales Masterclass — Plum POS</div>
+  <h1>Restaurant POS Sales Training</h1>
+  <p>Master every step — from the first knock to the signed deal</p>
+  <div class="hdr-meta">
+    <span>⏱ <strong>45 minutes</strong></span>
+    <span>📚 <strong>6 modules</strong></span>
+    <span>🎯 <strong>ACE Framework + Scripts</strong></span>
+    <span>🎓 <strong>Certification quiz</strong></span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-top"><span id="progLabel">Module 1 of 7</span><strong id="progPct">14%</strong></div>
+  <div class="prog-track"><div class="prog-fill" id="progBar" style="width:14%"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="goTo(0)">1 · Approach</button>
+  <button class="tab" onclick="goTo(1)">2 · Discovery</button>
+  <button class="tab" onclick="goTo(2)">3 · Pitch</button>
+  <button class="tab" onclick="goTo(3)">4 · Closing</button>
+  <button class="tab" onclick="goTo(4)">5 · Objections</button>
+  <button class="tab" onclick="goTo(5)">6 · Pro Tips</button>
+  <button class="tab" onclick="goTo(6)">📋 Quiz</button>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 1: APPROACH
+═══════════════════════════════════ -->
+<div class="sec active" id="s0">
+  <div class="mhdr">
+    <div class="micon" style="background:#e0f7ef">🚪</div>
+    <div class="minfo">
+      <h2>The door approach: first 30 seconds</h2>
+      <p>Your goal is to sell the conversation — not the product</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n">30s</div><div class="stat-l">Window to make an impression</div></div>
+    <div class="stat"><div class="stat-n">60s</div><div class="stat-l">All you need to ask for</div></div>
+    <div class="stat"><div class="stat-n">3 ft</div><div class="stat-l">Stand back from counter</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Body language checklist</h3>
+    <div class="chks">
+      <div class="chk chk-y">Smile genuinely — you belong here</div>
+      <div class="chk chk-y">Hands visible at all times — non-threatening posture</div>
+      <div class="chk chk-y">Stand 3 feet back from the counter</div>
+      <div class="chk chk-n">Never lean on their equipment</div>
+      <div class="chk chk-n">Never check your phone or look distracted</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The "non-sales" opening script</h3>
+    <div class="tip">Why it works: you reference a local neighbor (social proof), ask for only 60 seconds (low commitment), and mention their pain — the dinner rush — before you even say what you sell.</div>
+    <div class="script">
+      <span class="slbl">Say this word for word</span>
+      "Hey there! I'm <strong>[Your Name]</strong>, I'm just stopping by because I'm working with a few owners on this block — like <strong>[Mention a local neighbor]</strong> — to help them handle the dinner rush more efficiently. Is the owner or manager around for a quick 60 seconds, or are they buried in the kitchen right now?"
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The "pattern interrupt" opener</h3>
+    <div class="tip">Instead of "How are you today?" (which sounds like every salesperson ever), try this to instantly differentiate yourself:</div>
+    <div class="script">
+      <span class="slbl">Pattern interrupt — use at the door</span>
+      "I'll be brief — I know you're mid-shift."
+    </div>
+    <div class="script">
+      <span class="slbl">The local drop — follow immediately with</span>
+      "I was just talking to the manager over at [Neighboring Restaurant] about their delivery tablet mess…"
+    </div>
+    <div class="warn">These two lines do more work than a 2-minute pitch. They show respect for their time and prove you know their world.</div>
+  </div>
+
+  <div class="card">
+    <h3>Bad approach vs. great approach</h3>
+    <div class="vs">
+      <div class="vs-bad">
+        <div class="vslbl">❌ Bad approach</div>
+        "Hi, I sell point-of-sale systems and wanted to see if you're interested in upgrading your current setup. Do you have a minute?"
+        <div style="margin-top:8px;font-size:12px;opacity:.75">Leads with the product. Owner mentally checks out instantly.</div>
+      </div>
+      <div class="vs-good">
+        <div class="vslbl">✅ Great approach</div>
+        "I'll be brief — I know you're mid-shift. I was just at Tony's next door helping them fix their delivery tablet mess. Is the owner around for 60 seconds?"
+        <div style="margin-top:8px;font-size:12px;opacity:.75">Leads with respect + social proof. Sparks curiosity before pitching.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>When the owner isn't there: gatekeeper strategy</h3>
+    <div class="warn">Don't just leave a card — that goes in the trash. Use the gatekeeper to gather intel and book a specific return visit.</div>
+    <div class="script">
+      <span class="slbl">Ask the staff member</span>
+      "When is the 'calm before the storm' here? I want to make sure I don't catch them during a rush."
+    </div>
+    <div class="script">
+      <span class="slbl">Always get a name</span>
+      "Who should I ask for? Marco? Great — I'll come back Thursday morning and ask for Marco."
+    </div>
+    <div class="tip">Write the name down immediately. When you return and ask by name, you look like a trusted contact — not a cold caller.</div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="goTo(1)">Next: Discovery →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 2: DISCOVERY
+═══════════════════════════════════ -->
+<div class="sec" id="s1">
+  <div class="mhdr">
+    <div class="micon" style="background:#fef3c7">🔍</div>
+    <div class="minfo">
+      <h2>Discovery: finding the "burn"</h2>
+      <p>You can't solve a problem you haven't uncovered first</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="tip">The best reps listen 70%, talk 30%. Your questions should lead owners to realize their current system is costing them money — before you ever mention your product.</div>
+
+  <div class="card">
+    <h3>Four high-impact discovery questions</h3>
+    <div class="step-block">
+      <span class="stepn">1</span>
+      <div><div class="steplbl">On efficiency — rush hour pain</div>
+      <div class="script" style="margin:0">"During a Friday night rush, what's the biggest bottleneck? Is it the kitchen getting orders late, or the line at the front?"</div></div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">2</span>
+      <div><div class="steplbl">On delivery — tablet chaos</div>
+      <div class="script" style="margin:0">"How many tablets do you have buzzing over there? Do you have to manually re-type those DoorDash orders into your POS?"</div></div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">3</span>
+      <div><div class="steplbl">On costs — hidden fees</div>
+      <div class="script" style="margin:0">"When was the last time your current provider sat down and showed you exactly how much you're losing in processing fees?"</div></div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">4</span>
+      <div><div class="steplbl">The "magic wand" question</div>
+      <div class="script" style="margin:0">"If you could change one thing about how your staff takes orders today to make their lives easier, what would it be?"</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Discovery roleplay: tablet chaos scenario</h3>
+    <div class="roleplay">
+      <div class="rphdr">💬 Roleplay — busy pizza spot with 3 delivery tablets</div>
+      <div class="rpbody">
+        <div class="clbl">Rep (you)</div>
+        <div class="bub bub-rep">"How many delivery tablets do you have going at once — like right now?"</div>
+        <div class="clbl" style="margin-top:8px">Owner (Marco)</div>
+        <div class="bub bub-them">"Three. DoorDash, UberEats, and Grubhub. It's insane during dinner."</div>
+        <div class="clbl" style="margin-top:8px">Rep (you)</div>
+        <div class="bub bub-rep">"Do those orders auto-flow into your POS, or does someone have to retype them?"</div>
+        <div class="clbl" style="margin-top:8px">Owner (Marco)</div>
+        <div class="bub bub-them">"We retype everything. My cashier basically just does that all night."</div>
+        <div class="clbl" style="margin-top:8px">Rep — lock in the burn</div>
+        <div class="bub bub-rep">"So you're paying a cashier's hourly wage to manually enter orders that could come in automatically. That's the exact problem I've been fixing for guys like you."</div>
+      </div>
+    </div>
+    <div class="tip">Notice: the rep never mentioned price or features. They let the owner's own words reveal the problem, then reflected it back with dollar-cost framing.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(0)">← Back</button>
+    <button class="btn-next" onclick="goTo(2)">Next: Pitch →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 3: PITCH
+═══════════════════════════════════ -->
+<div class="sec" id="s2">
+  <div class="mhdr">
+    <div class="micon" style="background:#dbeafe">🌉</div>
+    <div class="minfo">
+      <h2>The pitch: the value bridge</h2>
+      <p>Don't list features — link their pain to your benefit</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="warn">Never pitch a feature without anchoring it to a pain you discovered. A feature without context is just noise to a busy owner.</div>
+
+  <div class="card">
+    <h3>The 4-step value bridge</h3>
+    <table class="btable">
+      <thead><tr><th></th><th>Step</th><th>Example script</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="stepn">1</span></td>
+          <td><strong>The hook</strong><br><small style="color:#888">Acknowledge pain</small></td>
+          <td>"You mentioned that re-keying delivery orders is a nightmare and it's eating up your cashier all night."</td>
+        </tr>
+        <tr>
+          <td><span class="stepn">2</span></td>
+          <td><strong>The bridge</strong><br><small style="color:#888">Introduce solution</small></td>
+          <td>"Our system pulls those orders directly into the kitchen. No tablets, no manual entry — everything flows in automatically."</td>
+        </tr>
+        <tr>
+          <td><span class="stepn">3</span></td>
+          <td><strong>The payoff</strong><br><small style="color:#888">Show the result</small></td>
+          <td>"This saves your staff 5 minutes per order and eliminates human error entirely — no more wrong orders to the kitchen."</td>
+        </tr>
+        <tr>
+          <td><span class="stepn">4</span></td>
+          <td><strong>The proof</strong><br><small style="color:#888">Social proof</small></td>
+          <td>"That's exactly why [Local Restaurant] on your block switched last month — they cut ticket errors by 80%."</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Feature dump vs. value bridge</h3>
+    <div class="vs">
+      <div class="vs-bad">
+        <div class="vslbl">❌ Feature dump</div>
+        "Our system has cloud reporting, tableside ordering, a loyalty program, delivery integration with all major platforms, and inventory management…"
+        <div style="margin-top:8px;font-size:12px;opacity:.75">Owner's brain shuts off. Too much, no context.</div>
+      </div>
+      <div class="vs-good">
+        <div class="vslbl">✅ Value bridge</div>
+        "You said those 3 tablets are driving you crazy. We consolidate all of that into one screen. No tablets, no retyping, no errors."
+        <div style="margin-top:8px;font-size:12px;opacity:.75">One problem, one solution, one outcome. Crystal clear.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Full pitch walkthrough: the savings scenario</h3>
+    <div class="roleplay">
+      <div class="rphdr">💬 Live pitch — Marco hasn't seen a fee breakdown in a year</div>
+      <div class="rpbody">
+        <div class="clbl">Rep — step 1, hook</div>
+        <div class="bub bub-rep">"Marco, you mentioned you haven't had your provider show you a fee breakdown in over a year."</div>
+        <div class="clbl" style="margin-top:8px">Rep — step 2, bridge</div>
+        <div class="bub bub-rep">"I pulled your volume estimates and built a quick comparison. Your current setup is costing roughly $400/month in fees we can eliminate."</div>
+        <div class="clbl" style="margin-top:8px">Rep — step 3, payoff</div>
+        <div class="bub bub-rep">"That's $4,800 a year going straight back into your pocket — I can show you that on paper right now."</div>
+        <div class="clbl" style="margin-top:8px">Rep — step 4, proof</div>
+        <div class="bub bub-rep">"This is exactly what we did for Tony's on the corner. He was skeptical too — saved $380 in his first month."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(1)">← Back</button>
+    <button class="btn-next" onclick="goTo(3)">Next: Closing →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 4: CLOSING
+═══════════════════════════════════ -->
+<div class="sec" id="s3">
+  <div class="mhdr">
+    <div class="micon" style="background:#e0f7ef">🤝</div>
+    <div class="minfo">
+      <h2>Closing techniques: securing the win</h2>
+      <p>"I'll think about it" usually means no — use these closes</p>
+      <div class="timer-pill">⏱ 7 min</div>
+    </div>
+  </div>
+
+  <div class="warn">In D2D, hesitation kills deals. Every technique below creates a low-friction path to yes. Match the close to the conversation.</div>
+
+  <div class="card">
+    <h3>Close A — the assumptive close</h3>
+    <div class="tip">Don't ask if they want it. Ask how they want it. Skip the yes/no gate entirely.</div>
+    <div class="script"><span class="slbl">Script</span>"Would it be easier for your staff to start with the handheld terminals for tableside ordering, or do you want to keep it strictly at the counter for now?"</div>
+    <div class="vs">
+      <div class="vs-bad"><div class="vslbl">❌ Don't say</div>"So… would you like to move forward with this?"<div style="margin-top:6px;font-size:12px;opacity:.75">Opens the door for a "no."</div></div>
+      <div class="vs-good"><div class="vslbl">✅ Do say</div>"Which setup makes more sense for your flow — handheld or counter-only to start?"<div style="margin-top:6px;font-size:12px;opacity:.75">Both options move forward.</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Close B — the savings close (the math win)</h3>
+    <div class="tip">Put real numbers on paper. Owners respond to dollars, not features.</div>
+    <div class="script"><span class="slbl">Script</span>"Based on your volume, I'm confident we can wipe out about $[Amount] in monthly fees. If I can show you that on paper right now, is there any reason we couldn't get the paperwork started today?"</div>
+    <div class="warn">Always do the math in front of them — on a notepad or your phone calculator. Making it visual makes it real.</div>
+  </div>
+
+  <div class="card">
+    <h3>Close C — the implementation close</h3>
+    <div class="tip">Use scarcity honestly. A real technician visit creates legitimate urgency.</div>
+    <div class="script"><span class="slbl">Script</span>"I have a technician in this zip code on Tuesday doing an install nearby. If I can get you on that schedule, we can have you up and running before the weekend rush. Does Tuesday morning work?"</div>
+  </div>
+
+  <div class="card">
+    <h3>Daily activity goal</h3>
+    <div class="stats">
+      <div class="stat"><div class="stat-n">20</div><div class="stat-l">Doors per day</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Conversations</div></div>
+      <div class="stat"><div class="stat-n">1</div><div class="stat-l">Lead</div></div>
+    </div>
+    <div class="success">Focus on the activity, and the results will follow. Run the numbers every single day.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(2)">← Back</button>
+    <button class="btn-next" onclick="goTo(4)">Next: Objections →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 5: OBJECTIONS (COMBINED)
+═══════════════════════════════════ -->
+<div class="sec" id="s4">
+  <div class="mhdr">
+    <div class="micon" style="background:#ede9fe">🛡️</div>
+    <div class="minfo">
+      <h2>Handling objections: the ACE framework</h2>
+      <p>Every objection is a question in disguise — pause, then ACE it</p>
+      <div class="timer-pill">⏱ 10 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The 3-second rule</h3>
+    <div class="purple-box">When a merchant raises an objection, <strong>wait 3 seconds before speaking.</strong> It shows you are listening — not just waiting to pitch. This single habit separates top reps from average ones.</div>
+  </div>
+
+  <div class="card">
+    <h3>The ACE framework</h3>
+    <div class="ace">
+      <div class="ace-card" style="background:#e0f7ef;color:#064e3b">
+        <div class="ace-letter" style="color:var(--green)">A</div>
+        <div class="ace-word">Acknowledge</div>
+        <div class="ace-desc">Validate their concern so they don't feel attacked or dismissed</div>
+      </div>
+      <div class="ace-card" style="background:#dbeafe;color:#1e3a8a">
+        <div class="ace-letter" style="color:var(--blue)">C</div>
+        <div class="ace-word">Clarify</div>
+        <div class="ace-desc">Ask a question to find the real objection underneath the stated one</div>
+      </div>
+      <div class="ace-card" style="background:#ede9fe;color:#4c1d95">
+        <div class="ace-letter" style="color:var(--purple)">E</div>
+        <div class="ace-word">Explore</div>
+        <div class="ace-desc">Present Plum POS as the bridge between their current pain and their goal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Real-world objections & response scripts</h3>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 1</span>
+      <div class="obj-body">
+        <strong>"I'm too busy right now. Come back later."</strong>
+        <span class="reality-tag">Reality: they're busy AND they want you to leave</span>
+        <div class="script" style="margin:6px 0 0">"I completely respect that — you've got a line out the door! I'm actually here because Plum POS helps restaurants like yours cut transaction times by 20% so that line moves faster. I'll be back Tuesday at 10 AM when it's quiet. Just so I'm prepared — are you more worried about your front-of-house speed or kitchen accuracy?"</div>
+        <small>ACE in action: Acknowledge the rush → Clarify where pain is worst → Explore with a specific return time.</small>
+      </div>
+    </div>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 2</span>
+      <div class="obj-body">
+        <strong>"I'm happy with my current system."</strong>
+        <span class="reality-tag">Reality: they haven't thought about what it's costing them</span>
+        <div class="script" style="margin:6px 0 0">"I totally understand how you <em>feel</em>. A lot of owners I talk to <em>felt</em> the same way — until they <em>found</em> out they were paying 3% in hidden fees that we cut in half. Can I show you a quick comparison? Two minutes."</div>
+        <small>Uses the feel-felt-found method to create curiosity without confrontation.</small>
+      </div>
+    </div>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 3</span>
+      <div class="obj-body">
+        <strong>"I already have Square / Clover / Toast."</strong>
+        <span class="reality-tag">Reality: they fear the hassle of switching more than they like their current system</span>
+        <div class="script" style="margin:6px 0 0">"Those are big names for a reason! Most owners I talk to use them. Usually, they stay because they think switching is a nightmare. If I could show you how our white-glove team handles the entire menu upload and hardware setup in one afternoon — while saving you $[Amount] in fees — would that be worth a 5-minute look?"</div>
+        <small>Validate their choice, then reframe switching as effortless rather than attacking their current system.</small>
+      </div>
+    </div>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 4</span>
+      <div class="obj-body">
+        <strong>"I don't like contracts / The price is too high."</strong>
+        <span class="reality-tag">Reality: they've been burned by hidden fees or "teaser rates" before</span>
+        <div class="script" style="margin:6px 0 0">"I hear you. Nothing is worse than a 'teaser rate' that doubles in six months. Plum POS is built on transparency — we don't just sell hardware, we provide a growth tool. If the system pays for itself in labor savings within the first 60 days, would the upfront cost still be your main concern?"</div>
+        <small>Address the real fear (hidden fees), then reframe cost as an investment with a 60-day payback.</small>
+      </div>
+    </div>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 5</span>
+      <div class="obj-body">
+        <strong>"I just signed a contract with my current provider."</strong>
+        <div class="script" style="margin:6px 0 0">"Totally fair — when does that contract come up? I'd love to circle back 30 days before so you have options. Mind if I grab your info? I won't contact you until then."</div>
+        <small>Don't force it — plant the seed, get contact info, and set a future trigger date.</small>
+      </div>
+    </div>
+
+    <div class="obj-row">
+      <span class="obj-tag">Objection 6</span>
+      <div class="obj-body">
+        <strong>"Send me some info."</strong>
+        <div class="script" style="margin:6px 0 0">"Of course — what's the best email? And honestly, the numbers are personalized to your volume. Could I get 5 minutes this Thursday to walk you through it? That way it actually means something."</div>
+        <small>"Send me info" is almost always a soft dismissal. Acknowledge, then anchor a specific follow-up time.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Roleplay video scenarios for practice</h3>
+    <div class="tip">Have reps film these three scenarios on their phone and submit for manager feedback. Watching yourself on video accelerates improvement faster than any script.</div>
+    <table class="vid-table">
+      <thead><tr><th>Scenario</th><th>Setup</th><th>Goal</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="vid-badge" style="background:#fee2e2;color:#7f1d1d">The Lunch Rush Brush-Off</span></td>
+          <td>Owner is walking away from the rep toward the kitchen mid-conversation.</td>
+          <td>Practice the Acknowledgment close and the Specific Re-schedule technique.</td>
+        </tr>
+        <tr>
+          <td><span class="vid-badge" style="background:#fef3c7;color:#78350f">The Happy Merchant</span></td>
+          <td>Merchant says: "Everything is fine, I don't need anything."</td>
+          <td>Practice Discovery to uncover a hidden pain point — e.g., high processing fees they haven't audited.</td>
+        </tr>
+        <tr>
+          <td><span class="vid-badge" style="background:#ede9fe;color:#4c1d95">The Tech Skeptic</span></td>
+          <td>Merchant is older and hates "fancy computers."</td>
+          <td>Practice explaining Plum POS hardware as "simple as a smartphone" — zero jargon allowed.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(3)">← Back</button>
+    <button class="btn-next" onclick="goTo(5)">Next: Pro Tips →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 6: PRO TIPS
+═══════════════════════════════════ -->
+<div class="sec" id="s5">
+  <div class="mhdr">
+    <div class="micon" style="background:#fef3c7">⚡</div>
+    <div class="minfo">
+      <h2>Pro tips & rep mindset</h2>
+      <p>The habits that separate top earners from the pack</p>
+      <div class="timer-pill">⏱ 4 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Daily habits for top reps</h3>
+    <div class="pro-tips">
+      <div class="pro-tip">
+        <div class="pro-tip-icon">🎯</div>
+        <h4>The "No" challenge</h4>
+        <p>Tell new reps to try and collect 50 "No's" in their first two days. It desensitizes them to rejection and leads them to "Yes" much faster.</p>
+      </div>
+      <div class="pro-tip">
+        <div class="pro-tip-icon">🌅</div>
+        <h4>Win the morning</h4>
+        <p>Spend the first 30 minutes of every day role-playing the hardest objection from the day before. Repetition builds instinct.</p>
+      </div>
+      <div class="pro-tip">
+        <div class="pro-tip-icon">💸</div>
+        <h4>Visualize the commission</h4>
+        <p>One "Yes" on a Plum POS system doesn't just earn a commission — it changes a local business owner's life. Remember that at every door.</p>
+      </div>
+      <div class="pro-tip">
+        <div class="pro-tip-icon">📋</div>
+        <h4>Review the ACE framework</h4>
+        <p>Before each block, review your objection scripts. The reps who sound natural practiced the most — not the ones who winged it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The mindset: owners are heroes</h3>
+    <div style="font-size:15px;line-height:1.85;color:#333;padding:.25rem 0">
+      Every restaurant owner is a hero in their community. They employ local people, feed neighborhoods, and work 60-hour weeks. You are not there to sell them something — you are there to give them their time and money back. Carry that energy into every single door.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Quick-reference: the full sales flow</h3>
+    <table class="btable">
+      <thead><tr><th>Stage</th><th>Your job</th><th>Watch out for</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Approach</strong></td><td>Earn the right to talk — sell 60 seconds</td><td>Leading with features too early</td></tr>
+        <tr><td><strong>Discovery</strong></td><td>Uncover the burn — listen 70%</td><td>Talking more than the owner</td></tr>
+        <tr><td><strong>Pitch</strong></td><td>Link pain → solution → outcome → proof</td><td>Feature dumping without context</td></tr>
+        <tr><td><strong>Close</strong></td><td>Assumptive, math, or urgency close</td><td>Asking "would you like to proceed?"</td></tr>
+        <tr><td><strong>Objection</strong></td><td>Pause 3s → ACE → re-close</td><td>Arguing instead of validating</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(4)">← Back</button>
+    <button class="btn-next" onclick="goTo(6)">Take the Quiz →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODULE 7: QUIZ
+═══════════════════════════════════ -->
+<div class="sec" id="s6">
+  <div class="mhdr">
+    <div class="micon" style="background:#dbeafe">📋</div>
+    <div class="minfo">
+      <h2>Certification quiz</h2>
+      <p>Score 80% or higher to earn your Plum POS D2D Sales certificate</p>
+    </div>
+  </div>
+
+  <div class="card" id="quizGate">
+    <h3>Trainee Details</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">
+      Please enter your details before starting the certification quiz.
+    </p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label for="userName" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Full Name</label>
+        <input id="userName" type="text" placeholder="Enter full name"
+          style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+      <div>
+        <label for="userEmail" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Email ID</label>
+        <input id="userEmail" type="email" placeholder="Enter email address"
+          style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+    </div>
+
+    <button type="button" class="btn-next" style="margin-top:14px;" onclick="startQuizAccess()">Start Quiz</button>
+  </div>
+
+  <div id="quizContent" style="display:none;">
+    <div id="qForm"></div>
+    <button type="button" class="btn-submit" id="submitBtn" onclick="submitQ()">Submit for certification</button>
+    <div id="certArea"></div>
+  </div>
+
+  <div class="nav-row" style="margin-top:1rem">
+    <button type="button" class="btn-prev" onclick="goTo(5)">← Back to modules</button>
+  </div>
+</div>
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznUkd-er7518oClTj1mqDLvsAcgybvCzurByPdzmbExhMcvIPJdee2wcjjJPuXcO1W/exec";
+const TRAINING_NAME = "Plum POS · D2D Sales Masterclass";
+const QUIZ_NAME = "Certification Quiz";
+const PASS_PERCENT = 80;
+const PLUM_LOGO = "data:image/png;base64,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";
+
+const Qs = [
+  // Approach
+  {sec:"Approach",q:"What is the primary goal of the door approach?",o:["Demonstrate all product features","Sell the conversation, not the product","Hand out business cards to every employee","Get the owner to sign a contract immediately"],a:1,e:"The goal is to sell the conversation first. You are an intruder until you prove you are an ally — don't pitch the product before earning trust."},
+  {sec:"Approach",q:"Instead of 'How are you today?', what should you open with to stand out?",o:["A detailed list of product features","A compliment about their restaurant","'I'll be brief — I know you're mid-shift'","Your full name and company name first"],a:2,e:"The 'pattern interrupt' opener — 'I'll be brief, I know you're mid-shift' — instantly shows respect for their time and differentiates you from every other salesperson."},
+  // Discovery
+  {sec:"Discovery",q:"During discovery, what ratio should reps aim for?",o:["Talk 70%, listen 30%","50/50 balanced conversation","Listen 70%, talk 30%","Talk as much as needed to explain the product"],a:2,e:"Best reps listen 70%, talk 30%. Questions should lead the owner to realize their own problem — not be told about it."},
+  {sec:"Discovery",q:"The 'magic wand' question is designed to:",o:["Get the owner to set a budget","Uncover the owner's ideal improvement in their own words","Introduce product features naturally","Test if they know your competitors"],a:1,e:"'If you could change one thing…' prompts owners to surface their pain in their own language — which you then mirror back in your pitch."},
+  // Pitch
+  {sec:"Pitch",q:"In the value bridge, what is the correct order of steps?",o:["Proof → Hook → Bridge → Payoff","Hook → Bridge → Payoff → Proof","Bridge → Hook → Payoff → Proof","Payoff → Proof → Hook → Bridge"],a:1,e:"Hook (acknowledge pain) → Bridge (introduce solution) → Payoff (show result) → Proof (social proof). Always anchor the solution to the pain first."},
+  // Closing
+  {sec:"Closing",q:"The assumptive close works by:",o:["Asking the owner if they'd like to proceed","Skipping the yes/no decision and asking how they want to proceed","Presenting a contract immediately","Offering a discount to create urgency"],a:1,e:"'Would you prefer handheld or counter-only to start?' Both options assume a yes — you bypass the yes/no gate entirely."},
+  {sec:"Closing",q:"An owner says 'I'll think about it.' In D2D, this usually signals:",o:["Genuine interest — give them space","They want more printed brochures","A soft no — use a closing technique now","They want to check with their business partner"],a:2,e:"In D2D, hesitation is rarely genuine — it's a soft no. Use an assumptive, savings, or implementation close to re-engage immediately."},
+  // Objections / ACE
+  {sec:"Objections",q:"What does ACE stand for?",o:["Assess, Confirm, Execute","Acknowledge, Clarify, Explore","Approach, Close, Earn","Assert, Counter, Explain"],a:1,e:"ACE = Acknowledge (validate their concern) → Clarify (find the real objection) → Explore (present Plum POS as the bridge to their goal)."},
+  {sec:"Objections",q:"What is the 3-second rule?",o:["Deliver your pitch in under 3 seconds","Wait 3 seconds after entering before speaking","Pause 3 seconds after an objection to show you are listening","Call back within 3 seconds of a missed call"],a:2,e:"Pausing 3 seconds after an objection shows you're listening — not just waiting to pitch. This single habit separates top reps from average ones."},
+  {sec:"Objections",q:"An owner says 'I already have Toast.' The best response focuses on:",o:["Attacking Toast's weaknesses aggressively","Agreeing that Toast is better and walking away","Reframing switching as effortless and showing fee savings","Immediately listing Plum POS features"],a:2,e:"Validate their choice first ('Those are big names for a reason!'), then reframe switching as a white-glove, one-afternoon process — not a nightmare. Lead with fee savings."},
+  {sec:"Objections",q:"When a merchant says 'Send me some info,' you should:",o:["Email them a brochure immediately and follow up in a week","Acknowledge it, then anchor a specific follow-up meeting time","Leave a card and never contact them again","Tell them you don't have brochures available"],a:1,e:"'Send me info' is usually a soft dismissal. Acknowledge it, get their email, then immediately try to schedule a specific 5-minute follow-up — otherwise it goes in the trash."},
+  // Pro Tips
+  {sec:"Pro Tips",q:"The 'No Challenge' for new reps involves:",o:["Trying to get 50 yes answers on day one","Collecting 50 'No's in their first two days to build rejection immunity","Knocking 50 doors in a single hour","Memorizing 50 objection scripts before starting"],a:1,e:"Trying to get 50 'No's in two days desensitizes new reps to rejection and forces enough volume that 'Yes' answers naturally follow."},
+];
+
+let sel = new Array(Qs.length).fill(null);
+let done = false;
+let submissionInProgress = false;
+
+function buildQ() {
+  const f = document.getElementById('qForm');
+  f.innerHTML = '';
+  let lastSec = '';
+
+  Qs.forEach((q, i) => {
+    if (q.sec !== lastSec) {
+      const lbl = document.createElement('span');
+      lbl.className = 'quiz-section-lbl';
+      lbl.textContent = '— ' + q.sec + ' —';
+      f.appendChild(lbl);
+      lastSec = q.sec;
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'qwrap';
+    wrap.innerHTML = `<div class="qnum">Question ${i + 1} of ${Qs.length}</div><div class="qtext">${q.q}</div>`;
+
+    q.o.forEach((opt, j) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt';
+      btn.id = `q${i}o${j}`;
+      btn.innerHTML = `<div class="radio" id="r${i}${j}"></div><span>${opt}</span>`;
+      if (!done) btn.onclick = () => pick(i, j);
+      wrap.appendChild(btn);
+    });
+
+    const fb = document.createElement('div');
+    fb.className = 'qfb';
+    fb.id = `fb${i}`;
+    wrap.appendChild(fb);
+
+    f.appendChild(wrap);
+  });
+
+  checkAll();
+}
+
+function pick(qi, oi) {
+  if (done) return;
+
+  sel[qi] = oi;
+  Qs[qi].o.forEach((_, j) => {
+    document.getElementById(`q${qi}o${j}`).classList.toggle('sel', j === oi);
+    document.getElementById(`r${qi}${j}`).classList.toggle('on', j === oi);
+  });
+
+  checkAll();
+}
+
+function checkAll() {
+  const submitBtn = document.getElementById('submitBtn');
+  if (!submitBtn) return;
+  submitBtn.style.display = sel.every(v => v !== null) ? 'block' : 'none';
+}
+
+function getUserName() {
+  const el = document.getElementById('userName');
+  return el ? el.value.trim() : '';
+}
+
+function getUserEmail() {
+  const el = document.getElementById('userEmail');
+  return el ? el.value.trim() : '';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[m];
+  });
+}
+
+function getAnswerSummary() {
+  return Qs.map((q, i) => {
+    const chosenIndex = sel[i];
+    const chosenText = chosenIndex !== null ? q.o[chosenIndex] : '';
+    const correctText = q.o[q.a];
+    return `Q${i + 1}: Selected="${chosenText}" | Correct="${correctText}"`;
+  }).join(' || ');
+}
+
+async function sendResultToGoogleSheet(payload) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL_HERE')) {
+    return { ok: false, message: 'Google Sheet URL is not configured yet.' };
+  }
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const responseText = await response.text();
+
+    try {
+      const parsed = JSON.parse(responseText);
+      return {
+        ok: parsed.status === 'success',
+        message: parsed.message || 'Submitted',
+		attemptNo: parsed.attemptNo || 1
+      };
+    } catch (e) {
+      return {
+        ok: response.ok,
+        message: responseText || 'Submitted'
+      };
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      message: error.message || 'Failed to submit'
+    };
+  }
+}
+function formatCertificateDate() {
+  return new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+function buildCertificateId(attemptNo) {
+  const d = new Date();
+  const y = d.getFullYear().toString().slice(-2);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const attempt = String(attemptNo || 1).padStart(2, '0');
+  return `PPD2D-${y}${m}${day}-${attempt}`;
+}
+
+function downloadCertificateFromForm(scorePercent, attemptNo) {
+  try {
+    const name = getUserName() || 'Participant';
+    downloadCertificate(name, scorePercent, attemptNo);
+  } catch (error) {
+    console.error('Certificate download failed:', error);
+    alert('Certificate download failed. Please check that jsPDF loaded correctly and try again.');
+  }
+}
+
+function downloadCertificate(name, scorePercent, attemptNo) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('PDF library did not load. Please reload the page and try again.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({
+    orientation: 'landscape',
+    unit: 'pt',
+    format: 'a4'
+  });
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const centerX = pageWidth / 2;
+
+  const issuedDate = formatCertificateDate();
+  const certificateId = buildCertificateId(attemptNo);
+  const safeName = (name || 'Participant').trim();
+
+  // Background
+  doc.setFillColor(18, 3, 36);
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
+  // Decorative glow blocks - smaller and less intrusive
+  doc.setFillColor(72, 30, 110);
+  doc.rect(0, 0, 150, 120, 'F');
+
+  doc.setFillColor(84, 18, 84);
+  doc.rect(pageWidth - 160, pageHeight - 130, 160, 130, 'F');
+
+  // Outer border
+  doc.setDrawColor(180, 70, 255);
+  doc.setLineWidth(2);
+  doc.rect(10, 10, pageWidth - 20, pageHeight - 20);
+
+  // Accent lines
+  doc.setDrawColor(180, 255, 60);
+  doc.setLineWidth(1);
+  doc.line(centerX - 85, 10, centerX + 85, 10);
+  doc.line(centerX - 85, pageHeight - 10, centerX + 85, pageHeight - 10);
+
+  // Logo - smaller
+  if (typeof PLUM_LOGO !== 'undefined' && PLUM_LOGO) {
+    const logoWidth = 58;
+    const logoHeight = 58;
+    const logoX = centerX - (logoWidth / 2);
+    const logoY = 62;
+    doc.addImage(PLUM_LOGO, 'PNG', logoX, logoY, logoWidth, logoHeight);
+  }
+
+  // Heading
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(170, 255, 50);
+  doc.text('CERTIFICATE OF COMPLETION', centerX, 140, { align: 'center' });
+
+  // Name
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(245, 245, 245);
+  doc.setFontSize(38);
+
+  if (doc.getTextWidth(safeName) > 500) {
+    doc.setFontSize(30);
+  }
+
+  doc.text(safeName, centerX, 192, { align: 'center' });
+
+  // Underline - clearly below name
+  doc.setDrawColor(170, 255, 50);
+  doc.setLineWidth(1.2);
+  doc.line(centerX - 70, 208, centerX + 70, 208);
+
+  // Subtitle lines - spaced properly
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(13);
+  doc.setTextColor(160, 152, 178);
+  doc.text('Successfully completed', centerX, 238, { align: 'center' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.setTextColor(242, 242, 245);
+  doc.text('Restaurant POS Sales Training', centerX, 258, { align: 'center' });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(12);
+  doc.setTextColor(150, 145, 170);
+  doc.text('D2D Sales Masterclass  ·  ACE Framework', centerX, 280, { align: 'center' });
+
+  // Score ring - lower and cleaner
+  const cx = centerX;
+  const cy = 365;
+  const radius = 56;
+
+  doc.setDrawColor(88, 64, 116);
+  doc.setLineWidth(8);
+  doc.circle(cx, cy, radius);
+
+  doc.setDrawColor(214, 76, 255);
+  doc.setLineWidth(7);
+  doc.circle(cx, cy, radius - 1);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(30);
+  doc.setTextColor(255, 255, 255);
+  doc.text(String(scorePercent), cx, cy + 10, { align: 'center' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(15);
+  doc.setTextColor(170, 255, 50);
+  doc.text('%', cx, cy + 30, { align: 'center' });
+
+  // Passed pill
+  const pillW = 84;
+  const pillH = 24;
+  const pillX = cx - pillW / 2;
+  const pillY = 420;
+
+  doc.setFillColor(38, 48, 18);
+  doc.roundedRect(pillX, pillY, pillW, pillH, 12, 12, 'F');
+
+  doc.setDrawColor(140, 200, 60);
+  doc.setLineWidth(0.8);
+  doc.roundedRect(pillX, pillY, pillW, pillH, 12, 12);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(170, 255, 50);
+  doc.text('• PASSED', cx, pillY + 16, { align: 'center' });
+
+  // Divider
+  doc.setDrawColor(70, 52, 94);
+  doc.setLineWidth(1);
+  doc.line(220, 485, pageWidth - 220, 485);
+
+  // Footer columns
+  const footerYLabel = 518;
+  const footerYValue = 540;
+  const col1 = centerX - 135;
+  const col2 = centerX;
+  const col3 = centerX + 135;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(120, 110, 145);
+  doc.text('ATTEMPT', col1, footerYLabel, { align: 'center' });
+  doc.text('DATE ISSUED', col2, footerYLabel, { align: 'center' });
+  doc.text('CERTIFICATE ID', col3, footerYLabel, { align: 'center' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(236, 236, 241);
+
+  doc.setFontSize(13);
+  doc.text(`#${attemptNo || 1}`, col1, footerYValue, { align: 'center' });
+
+  doc.setFontSize(12);
+  doc.text(issuedDate, col2, footerYValue, { align: 'center' });
+
+  doc.setFontSize(10);
+  doc.text(certificateId, col3, footerYValue, { align: 'center' });
+
+  const fileSafeName = safeName.replace(/[^a-z0-9]/gi, '_');
+  doc.save(`Certificate_${fileSafeName}.pdf`);
+}
+async function submitQ() {
+  if (submissionInProgress) return;
+
+  const userName = getUserName();
+  const userEmail = getUserEmail();
+
+  if (!userName || !userEmail) {
+    alert('Please enter your full name and email before submitting the quiz.');
+    return;
+  }
+
+  if (sel.some(v => v === null)) {
+    alert('Please answer all questions before submitting.');
+    return;
+  }
+
+  submissionInProgress = true;
+  done = true;
+
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+  }
+
+  let score = 0;
+
+  Qs.forEach((q, i) => {
+    const correct = q.a;
+    const chosen = sel[i];
+
+    if (chosen === correct) score++;
+
+    q.o.forEach((_, j) => {
+      const btn = document.getElementById(`q${i}o${j}`);
+      const r = document.getElementById(`r${i}${j}`);
+      if (!btn || !r) return;
+
+      btn.onclick = null;
+      btn.style.cursor = 'default';
+      btn.classList.remove('sel');
+
+      if (j === correct) {
+        btn.classList.add('correct');
+        r.className = 'radio on';
+      } else if (j === chosen && chosen !== correct) {
+        btn.classList.add('wrong');
+        r.className = 'radio err';
+      }
+    });
+
+    const fb = document.getElementById(`fb${i}`);
+    if (fb) {
+      fb.style.display = 'block';
+      fb.className = chosen === correct ? 'qfb ok' : 'qfb bad';
+      fb.textContent = (chosen === correct ? '✓ Correct — ' : '✗ Incorrect — ') + q.e;
+    }
+  });
+
+  if (submitBtn) {
+    submitBtn.style.display = 'none';
+  }
+
+  const pct = Math.round((score / Qs.length) * 100);
+  const pass = pct >= PASS_PERCENT;
+
+  const payload = {
+    timestamp: new Date().toISOString(),
+    name: userName,
+    email: userEmail,
+    trainingName: TRAINING_NAME,
+    quizName: QUIZ_NAME,
+    totalQuestions: Qs.length,
+    correctAnswers: score,
+    scorePercent: pct,
+    result: pass ? 'Pass' : 'Fail',
+    answers: getAnswerSummary()
+  };
+
+  const saveResult = await sendResultToGoogleSheet(payload);
+
+  const cert = document.getElementById('certArea');
+  cert.style.display = 'block';
+
+  cert.innerHTML = pass
+    ? `<div class="cert cert-neon">
+        <div class="cert-neon-frame"></div>
+        <div class="cert-neon-top"></div>
+        <div class="cert-neon-bottom"></div>
+
+        <div class="cert-brand">
+		<img src="${PLUM_LOGO}" alt="Plum Logo" class="cert-brand-logo">
+		</div>
+
+        <div class="cert-kicker">CERTIFICATE OF COMPLETION</div>
+
+        <div class="cert-name-neon">${escapeHtml(userName)}</div>
+        <div class="cert-name-line"></div>
+
+        <div class="cert-subline">
+          Successfully completed
+          <strong>Restaurant POS Sales Training</strong>
+          <span>· D2D Sales Masterclass · ACE Framework</span>
+        </div>
+
+        <div class="score-ring-wrap">
+          <div class="score-ring">
+            <div class="score-ring-inner">
+              <div class="score-ring-score">${pct}</div>
+              <div class="score-ring-pct">%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cert-status-pill">● PASSED</div>
+
+        <div class="cert-divider"></div>
+
+        <div class="cert-meta-grid">
+          <div class="cert-meta-item">
+            <div class="cert-meta-label">ATTEMPT</div>
+            <div class="cert-meta-value">#${saveResult.attemptNo || 1}</div>
+          </div>
+          <div class="cert-meta-item">
+            <div class="cert-meta-label">DATE ISSUED</div>
+            <div class="cert-meta-value">${escapeHtml(formatCertificateDate())}</div>
+          </div>
+          <div class="cert-meta-item">
+            <div class="cert-meta-label">CERTIFICATE ID</div>
+            <div class="cert-meta-value">${escapeHtml(buildCertificateId(saveResult.attemptNo || 1))}</div>
+          </div>
+        </div>
+
+        <div class="cert-msg cert-msg-neon">
+          ${saveResult.ok
+            ? `Result saved successfully. Attempt #${saveResult.attemptNo || 1}.`
+            : 'Quiz completed, but record update failed: ' + escapeHtml(saveResult.message)}
+        </div>
+
+        <button type="button" class="btn-next cert-download-btn" onclick="downloadCertificateFromForm(${pct}, ${saveResult.attemptNo || 1})">
+          Download Certificate PDF
+        </button>
+       </div>`
+    : `<div class="cert">
+        <div class="cert-badge" style="background:#fef3c7;border:2px solid #d97706">📚</div>
+        <div class="cert-title">Not quite there yet</div>
+        <div class="cert-sub">${PASS_PERCENT}% required to pass · ${score}/${Qs.length} correct</div>
+        <div class="score-big" style="color:#d97706">${pct}%</div>
+        <div style="margin-bottom:1rem"><span class="pill pill-a">${score}/${Qs.length} correct</span></div>
+        <div class="cert-msg">Review the highlighted answers below, go back through the modules, then try again. You've got this.</div>
+        <div class="cert-msg" style="margin-top:12px;color:${saveResult.ok ? '#0d9e6e' : '#b45309'}">
+          ${saveResult.ok
+            ? `Attempt saved successfully. Attempt #${saveResult.attemptNo || 1}.`
+            : 'Quiz completed, but record update failed: ' + escapeHtml(saveResult.message)}
+        </div>
+        <button type="button" class="btn-retry" onclick="retry()">Retry Quiz</button>
+       </div>`;
+
+  cert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  submissionInProgress = false;
+}
+function retry() {
+  done = false;
+  submissionInProgress = false;
+  sel = new Array(Qs.length).fill(null);
+
+  const certArea = document.getElementById('certArea');
+  if (certArea) certArea.innerHTML = '';
+
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit for certification';
+    submitBtn.style.display = 'none';
+  }
+
+  const quizContent = document.getElementById('quizContent');
+  if (quizContent) quizContent.style.display = 'block';
+
+  buildQ();
+
+  const qForm = document.getElementById('qForm');
+  if (qForm) {
+    qForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+const N = 7;
+function goTo(idx) {
+  document.querySelectorAll('.sec').forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', i === idx);
+  });
+
+  const pct = Math.round(((idx + 1) / N) * 100);
+  const progBar = document.getElementById('progBar');
+  const progLabel = document.getElementById('progLabel');
+  const progPct = document.getElementById('progPct');
+
+  if (progBar) progBar.style.width = pct + '%';
+  if (progLabel) progLabel.textContent = `Module ${idx + 1} of ${N}`;
+  if (progPct) progPct.textContent = pct + '%';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuizAccess() {
+  const name = document.getElementById('userName')?.value.trim();
+  const email = document.getElementById('userEmail')?.value.trim();
+
+  if (!name || !email) {
+    alert('Please enter your full name and email before starting the quiz.');
+    return;
+  }
+
+  const quizGate = document.getElementById('quizGate');
+  const quizContent = document.getElementById('quizContent');
+
+  if (quizGate) quizGate.style.display = 'none';
+  if (quizContent) quizContent.style.display = 'block';
+
+  done = false;
+  sel = new Array(Qs.length).fill(null);
+  buildQ();
+}
+
+// IMPORTANT: do not call buildQ() on page load in gated mode
+window.addEventListener('DOMContentLoaded', function () {
+  const quizContent = document.getElementById('quizContent');
+  if (quizContent) quizContent.style.display = 'none';
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plum POS — Product Training & Certification</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plum:#6d28d9;--plum-l:#ede9fe;--plum-d:#4c1d95;--plum-m:#7c3aed;
+  --green:#059669;--green-l:#d1fae5;--green-d:#065f46;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --red:#dc2626;--red-l:#fee2e2;
+  --blue:#2563eb;--blue-l:#dbeafe;
+  --teal:#0891b2;--teal-l:#cffafe;
+  --bg:#faf9f7;--surface:#fff;
+  --border:#e8e4f0;--border-s:#d0c9e8;
+  --text:#1a1520;--text2:#4a4360;--text3:#8b82a8;
+  --r:12px;--rs:8px;
+  --sh:0 1px 4px rgba(109,40,217,.07),0 4px 16px rgba(109,40,217,.05);
+  --sh2:0 1px 3px rgba(109,40,217,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;min-height:100vh}
+.shell{max-width:840px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#3b0764 0%,#6d28d9 55%,#7c3aed 100%);color:#fff;border-radius:18px;padding:2.5rem 2rem 2.25rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:-40px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.hdr::before{content:'';position:absolute;bottom:-60px;right:80px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04);pointer-events:none}
+.hdr-tag{display:inline-block;background:rgba(255,255,255,.18);color:rgba(255,255,255,.9);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 12px;border-radius:999px;margin-bottom:10px;border:1px solid rgba(255,255,255,.2)}
+.hdr h1{font-size:27px;font-weight:700;color:#fff;margin-bottom:6px;position:relative}
+.hdr p{font-size:14px;color:rgba(255,255,255,.65);margin-bottom:1.5rem;position:relative}
+.hdr-meta{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hdr-meta span{font-size:13px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.9);font-weight:500}
+
+/* PROGRESS */
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--sh2)}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-top span{font-size:13px;color:var(--text2)}
+.prog-top strong{font-size:13px;font-weight:600;color:var(--plum)}
+.prog-track{height:6px;background:#eeecea;border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--plum),var(--plum-m));border-radius:999px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab{padding:7px 14px;border-radius:999px;border:1px solid var(--border-s);background:var(--surface);color:var(--text2);font-family:'Sora',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s}
+.tab:hover{border-color:var(--plum);color:var(--plum)}
+.tab.active{background:var(--plum);border-color:var(--plum);color:#fff}
+.tab.done{border-color:var(--plum);color:var(--plum);background:var(--plum-l)}
+
+/* SECTIONS */
+.sec{display:none;animation:fi .3s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODULE HEADER */
+.mhdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.micon{width:50px;height:50px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.minfo{flex:1}
+.minfo h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
+.minfo p{font-size:13px;color:var(--text2)}
+.timer-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;background:var(--amber-l);color:var(--amber);font-size:12px;font-weight:600;margin-top:6px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh2)}
+.card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+
+/* CALLOUTS */
+.tip{background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#1e3a8a;line-height:1.6}
+.warn{background:var(--amber-l);border-left:3px solid var(--amber);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#78350f;line-height:1.6}
+.success{background:var(--green-l);border-left:3px solid var(--green);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:var(--green-d);line-height:1.6}
+.plum-box{background:var(--plum-l);border-left:3px solid var(--plum);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:var(--plum-d);line-height:1.6}
+
+/* HOOK BANNER */
+.hook{background:linear-gradient(135deg,#3b0764,#6d28d9);color:#fff;border-radius:var(--r);padding:1.5rem;margin-bottom:1.25rem;position:relative;overflow:hidden}
+.hook::after{content:'"';position:absolute;right:20px;top:-10px;font-size:100px;color:rgba(255,255,255,.08);font-family:Georgia,serif;line-height:1}
+.hook p{font-size:16px;line-height:1.75;font-style:italic;position:relative}
+.hook span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);display:block;margin-bottom:6px;font-style:normal;font-weight:600}
+
+/* HARDWARE GRID */
+.hw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.hw-card{border:1px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--surface);transition:border-color .2s}
+.hw-card:hover{border-color:var(--plum)}
+.hw-img-wrap{width:100%;height:130px;display:flex;align-items:center;justify-content:center;background:#f7f5fc;border-radius:var(--rs);margin-bottom:10px;overflow:hidden}
+.hw-img-wrap img{max-width:100%;max-height:120px;object-fit:contain;display:block}
+.hw-icon{font-size:26px;margin-bottom:8px}
+.hw-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.hw-desc{font-size:13px;color:var(--text2);line-height:1.5}
+.hw-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.badge-core{background:var(--plum-l);color:var(--plum-d)}
+.badge-periph{background:var(--teal-l);color:#164e63}
+
+/* TABLES */
+.ftable{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0}
+.ftable th{background:#f5f3fb;padding:9px 13px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em}
+.ftable td{padding:12px 13px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.55}
+.ftable tr:last-child td{border-bottom:none}
+.ftable tr:hover td{background:#faf8ff}
+.feat-name{font-weight:600;color:var(--plum-d);display:block;margin-bottom:2px}
+.feat-tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;background:var(--plum-l);color:var(--plum-d);margin-left:6px;vertical-align:middle}
+
+/* VS GRID */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.vs-bad{background:var(--red-l);border:1px solid #fca5a5;border-radius:var(--rs);padding:14px;font-size:13.5px;color:#7f1d1d;line-height:1.6}
+.vs-good{background:var(--green-l);border:1px solid #6ee7b7;border-radius:var(--rs);padding:14px;font-size:13.5px;color:#064e3b;line-height:1.6}
+.vslbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+
+/* WIN GRID */
+.win-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.win-card{border-radius:var(--rs);padding:14px;text-align:center}
+.win-icon{font-size:26px;margin-bottom:8px}
+.win-title{font-size:13.5px;font-weight:600;margin-bottom:5px}
+.win-desc{font-size:12.5px;line-height:1.5;opacity:.85}
+
+/* SCRIPT */
+.script{background:#f5f3fb;border:1px solid var(--border-s);border-radius:var(--rs);padding:14px 16px;margin:10px 0;font-size:14px;color:var(--text);line-height:1.8;font-style:italic}
+.slbl{font-family:'DM Mono',monospace;font-size:10px;font-style:normal;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px}
+
+/* STEP BUBBLE */
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--plum);color:#fff;font-size:11px;font-weight:700;flex-shrink:0}
+.step-block{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+.step-block:last-child{margin-bottom:0}
+.steplbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+
+/* CHAT BUBBLES */
+.roleplay{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:12px 0}
+.rphdr{background:#f5f3fb;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.rpbody{padding:14px;display:flex;flex-direction:column;gap:5px}
+.clbl{font-size:11px;color:var(--text3);margin-bottom:2px;font-family:'DM Mono',monospace}
+.bub{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.6;max-width:83%}
+.bub-them{background:#f0eef8;color:var(--text);border-radius:4px 12px 12px 12px}
+.bub-rep{background:var(--plum);color:#fff;border-radius:12px 4px 12px 12px;margin-left:auto}
+
+/* QUOTE CARD */
+.quote-card{border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;background:var(--surface);position:relative;margin-bottom:10px}
+.quote-card::before{content:'"';position:absolute;top:8px;left:14px;font-size:36px;color:var(--plum-l);font-family:Georgia,serif;line-height:1}
+.quote-text{font-size:14px;color:var(--text);line-height:1.75;padding-left:16px;font-style:italic}
+.quote-attr{font-size:12px;color:var(--text3);margin-top:8px;padding-left:16px;font-style:normal}
+.quote-attr strong{color:var(--text2);font-style:normal}
+
+/* STAT ROW */
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;box-shadow:var(--sh2)}
+.stat-n{font-size:28px;font-weight:700;color:var(--plum)}
+.stat-l{font-size:12px;color:var(--text3);margin-top:3px}
+
+/* TAG VISUAL */
+.tag-demo{background:#f5f3fb;border:1px solid var(--border-s);border-radius:var(--rs);padding:14px;margin:10px 0}
+.tag-badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;background:var(--plum);color:#fff;margin:3px}
+.tag-badge-green{background:var(--green);color:#fff}
+.tag-badge-amber{background:var(--amber);color:#fff}
+
+/* PRO TIPS */
+.tip-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.tip-card{border:1px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--surface)}
+.tip-card-icon{font-size:22px;margin-bottom:8px}
+.tip-card h4{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:5px}
+.tip-card p{font-size:13px;color:var(--text2);line-height:1.5}
+
+/* QUIZ */
+.q-part-hdr{background:var(--plum-l);border-radius:var(--rs);padding:10px 14px;margin:1.5rem 0 1rem;font-size:13px;color:var(--plum-d)}
+.q-part-hdr strong{font-weight:700;display:block;margin-bottom:2px}
+.qnum{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.qtext{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5}
+.qwrap{margin-bottom:1.75rem}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:6px;text-align:left;width:100%;line-height:1.5}
+.opt:hover{border-color:var(--plum);background:var(--plum-l)}
+.opt.sel{border-color:var(--plum);background:var(--plum-l);color:var(--plum-d)}
+.opt.correct{border-color:var(--green);background:var(--green-l);color:#064e3b}
+.opt.wrong{border-color:var(--red);background:var(--red-l);color:#7f1d1d}
+.radio{width:17px;height:17px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.radio.on{border-color:var(--plum);background:var(--plum)}
+.radio.on::after,.radio.cor::after,.radio.err::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.radio.cor{border-color:var(--green);background:var(--green)}
+.radio.err{border-color:var(--red);background:var(--red)}
+.qfb{font-size:13px;padding:9px 13px;border-radius:var(--rs);margin-top:6px;display:none;line-height:1.55}
+.qfb.ok{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green)}
+.qfb.bad{background:var(--red-l);color:#7f1d1d;border-left:3px solid var(--red)}
+.open-ta{width:100%;min-height:90px;padding:12px 14px;border-radius:var(--rs);border:1px solid var(--border-s);background:var(--surface);font-family:'Sora',sans-serif;font-size:14px;color:var(--text);resize:vertical;line-height:1.6;transition:border-color .15s}
+.open-ta:focus{outline:none;border-color:var(--plum)}
+.open-hint{font-size:12px;color:var(--text3);margin-top:5px;font-style:italic}
+.open-btn{margin-top:8px;padding:7px 16px;background:var(--plum-l);color:var(--plum-d);border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.open-btn:hover{background:var(--plum);color:#fff}
+.open-fb{font-size:13px;padding:10px 13px;border-radius:var(--rs);margin-top:8px;display:none;line-height:1.6;background:var(--plum-l);color:var(--plum-d);border-left:3px solid var(--plum)}
+.btn-submit{display:block;padding:12px 28px;background:var(--plum);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:1.25rem;transition:all .2s}
+.btn-submit:hover:not(:disabled){background:var(--plum-d)}
+.btn-submit:disabled{background:#c4b8e8;cursor:not-allowed;opacity:.65}
+
+/* NAV */
+.nav-row{display:flex;gap:10px;justify-content:flex-end;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.btn-next{padding:9px 22px;background:var(--plum);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-next:hover{background:var(--plum-d)}
+.btn-prev{padding:9px 22px;background:var(--surface);color:var(--text2);border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
+.btn-prev:hover{border-color:var(--text2);color:var(--text)}
+
+/* CERT */
+.cert{text-align:center;padding:3rem 2rem;border:1px solid var(--border);border-radius:var(--r);margin-top:1.5rem;background:var(--surface)}
+.cert-badge{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 1.25rem}
+.cert-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cert-sub{font-size:14px;color:var(--text2);margin-bottom:.75rem}
+.score-big{font-size:52px;font-weight:700;margin:.5rem 0}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-size:12px;font-weight:700}
+.pill-p{background:var(--plum-l);color:var(--plum-d)}
+.pill-a{background:var(--amber-l);color:var(--amber)}
+.cert-msg{font-size:14px;color:var(--text2);max-width:380px;margin:1rem auto 0;line-height:1.75}
+.cert-detail{display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.cert-detail span{font-size:13px;color:var(--text2)}
+.cert-detail strong{color:var(--text);font-weight:600}
+.btn-retry{margin-top:1.25rem;padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+
+@media(max-width:560px){
+  .hw-grid,.vs,.win-grid,.tip-cards,.stats3{grid-template-columns:1fr}
+  .hdr h1{font-size:20px}
+  .ftable{font-size:12px}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="shell">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-tag">Plum POS — Product Training v2</div>
+  <h1>Product Knowledge & Certification</h1>
+  <p>Hardware · Order Taking · Management Tools · Administration · Competitive Edge</p>
+  <div class="hdr-meta">
+    <span>⏱ <strong>50 minutes</strong></span>
+    <span>📚 <strong>6 modules</strong></span>
+    <span>🏢 <strong>Real client stories</strong></span>
+    <span>🎓 <strong>Certification quiz</strong></span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-top"><span id="progLabel">Module 1 of 7</span><strong id="progPct">14%</strong></div>
+  <div class="prog-track"><div class="prog-fill" id="progBar" style="width:14%"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="goTo(0)">1 · Why Plum?</button>
+  <button class="tab" onclick="goTo(1)">2 · Hardware</button>
+  <button class="tab" onclick="goTo(2)">3 · Order Taking</button>
+  <button class="tab" onclick="goTo(3)">4 · Manager Tools</button>
+  <button class="tab" onclick="goTo(4)">5 · Administration</button>
+  <button class="tab" onclick="goTo(5)">6 · Competitive Edge</button>
+  <button class="tab" onclick="goTo(6)">📋 Certification</button>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 1: WHY PLUM?
+═══════════════════════════ -->
+<div class="sec active" id="s0">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">💜</div>
+    <div class="minfo">
+      <h2>Why Plum POS?</h2>
+      <p>The mission, the promise, and who we serve</p>
+      <div class="timer-pill">⏱ 6 min</div>
+    </div>
+  </div>
+
+  <div class="hook">
+    <span>The Plum Hook — open every pitch with this</span>
+    <p>"What if you could update your prices across your counter, kiosk, website, and DoorDash in 10 seconds? That's the power of Plum."</p>
+  </div>
+
+  <div class="card">
+    <h3>What Plum POS is</h3>
+    <div class="plum-box">Plum POS is a <strong>thoughtfully designed, top-tier hardware and software solution</strong> — the heartbeat of a modern restaurant. It's purpose-built for restaurants, not generic retail. For a D2D rep, your mission is to show owners how we replace headaches with growth.</div>
+    <div class="vs" style="margin-top:12px">
+      <div class="vs-bad">
+        <div class="vslbl">❌ Owner's headaches today</div>
+        Slow checkout during rush hour<br>
+        Messy, inconsistent menus across platforms<br>
+        High processing fees eating into margins<br>
+        Manual delivery order re-entry<br>
+        No real-time visibility when off-site<br>
+        Manager stuck closing for an extra hour each night
+      </div>
+      <div class="vs-good">
+        <div class="vslbl">✅ What Plum delivers</div>
+        Faster orders with Order Right™ technology<br>
+        One update syncs everywhere instantly<br>
+        Lower credit card rates — saves $200–$400/mo<br>
+        All delivery apps feed into one screen<br>
+        Real-time reports from any phone, anywhere<br>
+        Automated closing — managers go home on time
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Who trusts Plum — real brands, real results</h3>
+    <div class="plum-box">Plum powers <strong>6 out of 10 top global restaurant brands</strong> and is trusted by chains including CiCi's Pizza, Famous Dave's BBQ, Mooyah Burgers, Rusty Taco, and Gattis Pizza.</div>
+    <div class="quote-card">
+      <div class="quote-text">"With Plum POS, price changes take seconds. We update it once, and it syncs automatically across menu boards, online orders, and third-party platforms. It's seamless and saves our restaurant hours every week."</div>
+      <div class="quote-attr"><strong>Steve Mullens</strong> — Franchise Owner, CiCi's Pizza (Quick-Service Pizza Chain)</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"Plum Handheld is so simple to use and has boosted our restaurant's efficiency. Orders reach the kitchen instantly — no backups, no rush, just smooth service and happy guests."</div>
+      <div class="quote-attr"><strong>Desiree Nichols</strong> — Multi-Unit General Manager, Famous Dave's BBQ</div>
+    </div>
+    <div class="quote-card">
+      <div class="quote-text">"Installing the Plum POS system has been the best decision to date. The flawless integration between hardware and software has automated numerous time-consuming tasks."</div>
+      <div class="quote-attr"><strong>Devan Hollis</strong> — Sandwich Express</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Who is the Plum customer?</h3>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px">
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">🍕</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Quick Service</div>
+        <div style="font-size:12px;color:var(--text2)">Pizza, fast-casual, delis — high volume, speed is everything, kiosks reduce lines</div>
+      </div>
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">🍽️</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Full Service</div>
+        <div style="font-size:12px;color:var(--text2)">Sit-down restaurants — tableside ordering, split checks, and table management</div>
+      </div>
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">🥡</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Delivery-Heavy</div>
+        <div style="font-size:12px;color:var(--text2)">High delivery volume — tablet chaos and manual re-entry is the #1 pain point</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">🍺</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Bars & Nightlife</div>
+        <div style="font-size:12px;color:var(--text2)">Fast tab management, split payments, handheld ordering throughout venue</div>
+      </div>
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">☕</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Coffee & Bakery</div>
+        <div style="font-size:12px;color:var(--text2)">Fast counter service, loyalty integration, and quick menu updates for seasonal items</div>
+      </div>
+      <div style="text-align:center;padding:14px 10px;border:1px solid var(--border);border-radius:var(--rs)">
+        <div style="font-size:28px;margin-bottom:6px">🏢</div>
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">Franchise Groups</div>
+        <div style="font-size:12px;color:var(--text2)">Multi-unit operators who need centralized control with site-level flexibility</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="goTo(1)">Next: Hardware →</button></div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 2: HARDWARE
+═══════════════════════════ -->
+<div class="sec" id="s1">
+  <div class="mhdr">
+    <div class="micon" style="background:#cffafe">🖥️</div>
+    <div class="minfo">
+      <h2>Hardware 101: the ecosystem</h2>
+      <p>Know every piece — what it does, its specs, and how to sell it</p>
+      <div class="timer-pill">⏱ 8 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">All Plum hardware is built with <strong>commercial-grade equipment</strong> — heat-tested, spill-resistant, designed for the real chaos of a busy restaurant kitchen. This is not consumer off-the-shelf technology.</div>
+
+  <div class="card">
+    <h3>Core hardware — the four pillars</h3>
+    <div class="hw-grid">
+      <div class="hw-card">
+        <div class="hw-badge badge-core">Core</div>
+        <div class="hw-img-wrap">
+          <img src="https://plumpos.com/assets/images/pages/home_slider/POS-Terminal-799-3c32e26a5.webp" alt="Plum POS Terminal" onerror="this.parentNode.innerHTML='🖥️'">
+        </div>
+        <div class="hw-name">POS Terminal</div>
+        <div class="hw-desc"><strong>15.6-inch HD touchscreen</strong>, Android-powered, IP64 spill-resistant front panel. Central hub for orders, payments, menu management, and reporting. Speed-tested with <strong>zero lag during rush hours</strong>. If your staff can use a smartphone, they can master Plum in 10 minutes.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-core">Core</div>
+        <div class="hw-img-wrap">
+          <img src="https://plumpos.com/assets/images/pages/home_slider/Handheld-restaurant-POS-system-799-1cdb44857.webp" alt="Plum Handheld POS" onerror="this.parentNode.innerHTML='📱'">
+        </div>
+        <div class="hw-name">Handheld POS</div>
+        <div class="hw-desc">Mobile device for <strong>tableside ordering and payments</strong>. Accepts NFC, chip, and contactless payments at the table — staff never walk back to the counter. Keeps servers moving quickly, increases table turnover, and reduces errors from shouted orders. Fully integrated with the main terminal in real time.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-core">Core</div>
+        <div class="hw-img-wrap">
+          <img src="https://plumpos.com/assets/images/pages/home_slider/self-service-kiosk-799-d17e10d45.webp" alt="Plum Self-Ordering Kiosk" onerror="this.parentNode.innerHTML='🪧'">
+        </div>
+        <div class="hw-name">Self-Ordering Kiosk</div>
+        <div class="hw-desc">Guest-facing self-ordering station that <strong>reduces wait times and upsells automatically on every transaction</strong> — consistently, without relying on staff. Lowers labor costs while increasing revenue per ticket. Ideal for QSRs, food courts, and high-traffic counters. All kiosk orders sync instantly with the POS.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-core">Core</div>
+        <div class="hw-img-wrap">
+          <img src="https://plumpos.com/assets/images/pages/home_slider/Kitchen-display-system-integrated-with-restaurant-POS-system-for-order-management-527-9dbbc3606.webp" alt="Plum Kitchen Display System" onerror="this.parentNode.innerHTML='📺'">
+        </div>
+        <div class="hw-name">Kitchen Display System (KDS)</div>
+        <div class="hw-desc">Replaces paper tickets with <strong>digital screens for kitchen staff</strong> — 100% order accuracy. No lost tickets, no misread handwriting, no wasted food. Works hand-in-hand with Order Right™ technology to ensure every order reaches the kitchen exactly as the guest intended.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Peripherals — available today</h3>
+    <div class="hw-grid">
+      <div class="hw-card">
+        <div class="hw-badge badge-periph">Peripheral</div>
+        <div class="hw-img-wrap" style="background:#f0f0f0">
+          <img src="https://minio.plumpos.com/plum-field/content/decks/Plum POS/products/20001.png" alt="Plum Starter Bundle with Card Reader" onerror="this.parentNode.innerHTML='🖨️'">
+        </div>
+        <div class="hw-name">Plum Receipt Printer</div>
+        <div class="hw-desc">High-speed thermal printers for customer receipts and kitchen chits. Fully integrated with the terminal — prints automatically on transaction completion. No separate configuration needed.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-periph">Peripheral</div>
+        <div class="hw-img-wrap">
+          <img src="https://plumpos.com/assets/images/pages/home_slider/POS-terminal-screen-showing-dashboard-and-order-management-799-c33f3949c.webp" alt="Cash Drawer" onerror="this.parentNode.innerHTML='💵'">
+        </div>
+        <div class="hw-name">Cash Drawer</div>
+        <div class="hw-desc">Secure cash storage, fully integrated with the Plum Terminal. Opens automatically on cash transactions. Eliminates the need for separate drawer management or reconciliation workarounds.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-periph">Peripheral</div>
+        <div class="hw-img-wrap" style="background:#f0f4ff">
+          <img src="https://minio.plumpos.com/plum-field/content/decks/Plum POS/products/20001.png" alt="PAX Credit Card Reader" onerror="this.style.display='none'" style="display:none">
+          <div style="text-align:center;padding:10px">
+            <div style="font-size:36px;margin-bottom:4px">💳</div>
+            <div style="font-size:11px;font-weight:700;color:#3b0764;letter-spacing:.04em">PAX DEVICE</div>
+          </div>
+        </div>
+        <div class="hw-name">Credit Card Reader — PAX</div>
+        <div class="hw-desc">PAX payment terminals integrated with Plum POS for <strong>fast, secure card acceptance</strong>. Supports NFC/contactless (Apple Pay, Google Pay), EMV chip, and magnetic swipe. PCI-compliant, tamper-resistant hardware. Works seamlessly at the counter, tableside, and at the kiosk for a consistent payment experience across the restaurant.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-periph">Peripheral</div>
+        <div class="hw-img-wrap" style="background:#f0f7f0">
+          <div style="text-align:center;padding:10px">
+            <div style="font-size:36px;margin-bottom:4px">🖨️</div>
+            <div style="font-size:11px;font-weight:700;color:#065f46;letter-spacing:.04em">KITCHEN PRINTER</div>
+          </div>
+        </div>
+        <div class="hw-name">Kitchen Printer</div>
+        <div class="hw-desc">Dedicated high-speed thermal printer for the kitchen — prints order tickets automatically when orders are submitted from the terminal, handheld, kiosk, or delivery platforms. Ideal for kitchens that prefer printed chits alongside or instead of the KDS. Waterproof and grease-resistant paper support. Fully integrated — no manual routing required.</div>
+      </div>
+      <div class="hw-card">
+        <div class="hw-badge badge-periph">Peripheral</div>
+        <div class="hw-img-wrap">
+          <div style="text-align:center;padding:10px">
+            <div style="font-size:36px;margin-bottom:4px">📊</div>
+            <div style="font-size:11px;font-weight:700;color:#164e63;letter-spacing:.04em">BARCODE SCANNER</div>
+          </div>
+        </div>
+        <div class="hw-name">Barcode Scanner</div>
+        <div class="hw-desc">Used for retail items, grab-and-go products, or quick inventory lookups. Fully integrated with the Plum Terminal — scan items directly into the order without manual entry. Ideal for restaurants with packaged goods or retail merchandise.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Pain-to-product quick match</h3>
+    <table class="ftable">
+      <thead><tr><th>If the owner says…</th><th>Show them</th><th>Why it wins</th></tr></thead>
+      <tbody>
+        <tr><td>"My kitchen gets the wrong orders constantly"</td><td><strong>KDS + Order Right™</strong></td><td>Digital prompts eliminate illegible handwriting, lost tickets, and memory errors</td></tr>
+        <tr><td>"The line at my counter is too long"</td><td><strong>Self-Ordering Kiosk</strong></td><td>Guests order themselves — zero wait for staff, automatic upsells on every transaction</td></tr>
+        <tr><td>"My servers are always running back to the terminal"</td><td><strong>Handheld POS</strong></td><td>Orders and payments happen tableside — staff stays on the floor, tables turn faster</td></tr>
+        <tr><td>"I have 3 delivery tablets buzzing all night"</td><td><strong>Integrated Marketplace</strong></td><td>All delivery orders flow directly into the POS and KDS — no tablets, no retyping</td></tr>
+        <tr><td>"I can't see what's selling when I'm not here"</td><td><strong>Deep Reporting</strong></td><td>Real-time dashboard on any phone, anywhere, at any time</td></tr>
+        <tr><td>"My menus are different on every platform"</td><td><strong>Cloud-Based Sync</strong></td><td>One update pushes everywhere — kiosk, handhelds, menu boards, online, third-party apps</td></tr>
+        <tr><td>"Guests want to tap their phone or use Apple Pay"</td><td><strong>PAX Credit Card Reader</strong></td><td>NFC/contactless, EMV chip, and swipe — PCI-compliant, works at counter, tableside, and kiosk</td></tr>
+        <tr><td>"My kitchen team prefers printed tickets over a screen"</td><td><strong>Kitchen Printer</strong></td><td>Auto-prints order chits from all channels — terminal, handheld, kiosk, and delivery apps</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(0)">← Back</button>
+    <button class="btn-next" onclick="goTo(2)">Next: Order Taking →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 3: ORDER TAKING
+═══════════════════════════ -->
+<div class="sec" id="s2">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--green-l)">🍽️</div>
+    <div class="minfo">
+      <h2>Order taking: customer service features</h2>
+      <p>Order Right™, split checks, smart discounts, table management, and unified orders</p>
+      <div class="timer-pill">⏱ 10 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Order Right™ technology — the flagship feature</h3>
+    <div class="plum-box"><strong>Order Right™</strong> uses visual prompts to guide staff through every order modification — ensuring every burger, every pizza, every custom dish is made exactly as the guest intended. It's Plum's most powerful upsell and accuracy tool.</div>
+    <div class="stats3">
+      <div class="stat"><div class="stat-n">8%</div><div class="stat-l">Sales increase per store at CiCi's Pizza after Order Right™</div></div>
+      <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Order accuracy when visual prompts are followed</div></div>
+      <div class="stat"><div class="stat-n">$0</div><div class="stat-l">Comped meals from wrong orders when Order Right™ is active</div></div>
+    </div>
+    <div class="tip">CiCi's Pizza was missing sales opportunities when customers created custom pizzas. Using Order Right™, they saw an <strong>8% increase in overall sales revenue per store</strong> — simply by capturing add-ons they were previously missing.</div>
+    <div class="vs">
+      <div class="vs-bad">
+        <div class="vslbl">Without Order Right™</div>
+        Staff guesses at modifications → Wrong order leaves kitchen → Guest complains → Manager comps the meal → $15–$25 loss per incident × dozens of times per week
+      </div>
+      <div class="vs-good">
+        <div class="vslbl">With Order Right™</div>
+        Visual prompt appears for every modification → Staff confirms each item → Perfect order every time → No comps, no waste, no unhappy guests
+      </div>
+    </div>
+    <div class="script">
+      <span class="slbl">How to pitch Order Right™ to an owner</span>
+      "How much do you lose a week in comped meals from wrong orders? Even just 3–4 mistakes at $15 each is $200+ a month going straight out the door. Order Right™ eliminates that entirely. And CiCi's Pizza — one of our clients — actually saw an 8% increase in sales per store after switching, because staff started capturing add-ons and upsells they used to miss."
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Order Anywhere — flexible hardware for every service style</h3>
+    <div class="tip">Owners don't have to choose one ordering mode. Plum supports all of them simultaneously — counter, tableside, and self-service — from a single unified system.</div>
+    <table class="ftable">
+      <thead><tr><th>Mode</th><th>Hardware</th><th>Best for</th><th>Key benefit</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Counter service</strong></td><td>POS Terminal</td><td>QSR, coffee, bakery, fast-casual</td><td>Speed, queue management, kiosk overflow</td></tr>
+        <tr><td><strong>Tableside ordering</strong></td><td>Handheld POS</td><td>Full-service, casual dining, bars</td><td>Faster table turns, fewer trips, higher tips</td></tr>
+        <tr><td><strong>Self-service</strong></td><td>Kiosk</td><td>QSR, food courts, high traffic</td><td>Lower labor costs, automatic upsells on every order</td></tr>
+        <tr><td><strong>Online & delivery</strong></td><td>Integrated Marketplace</td><td>Any restaurant with delivery volume</td><td>All orders in one place — no tablets, no manual entry</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Split checks — effortless for large parties</h3>
+    <div class="plum-box">Split checks are one of the most painful operations in any full-service restaurant. Plum makes it simple with three flexible split modes and drag-and-drop adjustments.</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin:12px 0">
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Split evenly by the number of guests at the table</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Split by each guest's individual order items</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Split specific items between multiple guests</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> On-the-fly adjustments with user-friendly drag-and-drop</div>
+    </div>
+    <div class="success">Famous Dave's reports that splitting checks for large parties used to take up to <strong>10 minutes</strong>. With Plum's split check feature, it now takes under 60 seconds.</div>
+    <div class="script">
+      <span class="slbl">Pitch line for full-service restaurants</span>
+      "How long does it take your staff to split a check for a party of 8? With Plum, it's under 60 seconds — drag, drop, done. Famous Dave's used to spend up to 10 minutes on a large party split. That time adds up every single night."
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Smart discounts — validated, automated, accurate</h3>
+    <div class="plum-box">Plum's advanced discount engine <strong>validates and auto-applies discounts</strong> — protecting you from under-ringing, sweetheart deals, and coupon misuse.</div>
+    <div class="step-block">
+      <span class="stepn">1</span>
+      <div><div class="steplbl">Coupon validation</div>All coupons are validated by Plum to ensure every requirement is met before applying — no staff override, no exceptions.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">2</span>
+      <div><div class="steplbl">Automatic combo detection</div>If combo items are ordered separately, Plum automatically applies the combo price — customers always get the best price without staff having to know every combo.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">3</span>
+      <div><div class="steplbl">Rules-based discount engine</div>Set complex discount rules based on sales channel, store, region, day of week, time of day, or any combination. The system enforces the rules — not your staff.</div>
+    </div>
+    <div class="tip">CiCi's Pizza was not only able to increase sales through more accurate discounts but also <strong>greatly reduced the number of coupons and promotions they needed to manage</strong> compared to their old system.</div>
+  </div>
+
+  <div class="card">
+    <h3>Table management — at-a-glance control</h3>
+    <div class="plum-box">Managers and hosts can see the real-time status of every table in the restaurant from a single screen — no running around, no guessing.</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0">
+      <div style="text-align:center;padding:12px 8px;background:#f0eef8;border-radius:var(--rs);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px">Open</div>
+        <div style="width:32px;height:32px;border-radius:6px;background:var(--green-l);border:2px solid var(--green);margin:0 auto"></div>
+        <div style="font-size:11px;color:var(--green-d);margin-top:5px">Available</div>
+      </div>
+      <div style="text-align:center;padding:12px 8px;background:#f0eef8;border-radius:var(--rs);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px">Dirty</div>
+        <div style="width:32px;height:32px;border-radius:6px;background:var(--amber-l);border:2px solid var(--amber);margin:0 auto"></div>
+        <div style="font-size:11px;color:var(--amber);margin-top:5px">Needs clearing</div>
+      </div>
+      <div style="text-align:center;padding:12px 8px;background:#f0eef8;border-radius:var(--rs);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px">Reserved</div>
+        <div style="width:32px;height:32px;border-radius:6px;background:var(--blue-l);border:2px solid var(--blue);margin:0 auto"></div>
+        <div style="font-size:11px;color:var(--blue);margin-top:5px">Held for guest</div>
+      </div>
+      <div style="text-align:center;padding:12px 8px;background:#f0eef8;border-radius:var(--rs);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px">Unavailable</div>
+        <div style="width:32px;height:32px;border-radius:6px;background:var(--red-l);border:2px solid var(--red);margin:0 auto"></div>
+        <div style="font-size:11px;color:var(--red);margin-top:5px">Out of service</div>
+      </div>
+    </div>
+    <div class="tip">At a glance: every table shows its current status, which server owns it, and how long the guest has been seated — all from the main terminal or manager's device.</div>
+  </div>
+
+  <div class="card">
+    <h3>All orders in one place — unified order management</h3>
+    <div class="plum-box">With Plum, you won't need separate devices for online orders, delivery orders, and counter orders. <strong>All orders appear on one screen and route automatically to the kitchen.</strong></div>
+    <div class="roleplay">
+      <div class="rphdr">💬 Unified orders pitch — owner with 3 delivery tablets</div>
+      <div class="rpbody">
+        <div class="clbl">Owner (frustrated)</div>
+        <div class="bub bub-them">"I have DoorDash, Grubhub, and UberEats tablets all buzzing. My cashier spends the whole night retyping orders."</div>
+        <div class="clbl" style="margin-top:8px">Rep</div>
+        <div class="bub bub-rep">"That's three separate tablets you're paying attention to, three chances for an error, and one cashier whose entire job is manual data entry. With Plum, every delivery order from every platform comes directly into your POS screen — and routes straight to the kitchen. No tablets. No retyping. No errors. Your cashier can focus on your in-store guests."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(1)">← Back</button>
+    <button class="btn-next" onclick="goTo(3)">Next: Manager Tools →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 4: MANAGER TOOLS
+═══════════════════════════ -->
+<div class="sec" id="s3">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--amber-l)">📊</div>
+    <div class="minfo">
+      <h2>Manager tools: control & visibility</h2>
+      <p>Reporting, refunds, labor management, and Hubworks integration</p>
+      <div class="timer-pill">⏱ 8 min</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Increased manager productivity</h3>
+    <div class="plum-box">A manager's shift is already over-tasked. Plum automates the time-consuming end-of-day duties so managers can go home on time — and focus on people, not paperwork.</div>
+    <div class="quote-card">
+      <div class="quote-text">"I couldn't believe how simplified the closing procedures are with Plum. It automated tasks that used to keep me at the store an extra hour every night."</div>
+      <div class="quote-attr"><strong>John</strong> — General Manager, Famous Dave's</div>
+    </div>
+    <div class="tip">When pitching to a manager or owner who manages operations directly, this quote lands hard. The "extra hour every night" is 365 hours a year — that's nine 40-hour work weeks they're getting back.</div>
+  </div>
+
+  <div class="card">
+    <h3>Real-time sales & labor reporting</h3>
+    <div class="stats3">
+      <div class="stat"><div class="stat-n">1–3%</div><div class="stat-l">Labor cost reduction from real-time labor tracking</div></div>
+      <div class="stat"><div class="stat-n">Live</div><div class="stat-l">Sales data from any phone, even when off-site</div></div>
+      <div class="stat"><div class="stat-n">Auto</div><div class="stat-l">End-of-day closing procedures — zero manual steps</div></div>
+    </div>
+    <div class="plum-box">Managers can track labor in real time — seeing exactly who is clocked in, what they're costing per hour, and whether current staffing matches current sales volume. This alone typically reduces labor costs by <strong>1–3%</strong>.</div>
+    <div class="script">
+      <span class="slbl">Reporting pitch line</span>
+      "You're at your kid's Saturday game. You pull out your phone and you can see exactly what's selling right now, who's on shift, what your labor cost percentage is, and whether you're on track to hit your sales goal — all in real time. That's what Plum's reporting gives you."
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Refund mode — fast, accurate, protected</h3>
+    <div class="plum-box">Plum's refund system captures the original transaction context — including all discounts and specialty pricing — so every refund is accurate and the business is protected.</div>
+    <div class="step-block">
+      <span class="stepn">1</span>
+      <div><div class="steplbl">Referenced refund</div>Locate the original order by transaction ID. Select which items to refund. Plum automatically applies any discounts or specialty pricing from the original check — ensuring accurate refunds, not full-price refunds on discounted items.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">2</span>
+      <div><div class="steplbl">Unreferenced refund</div>For situations where the original transaction isn't available — process a standalone refund with manager authorization. Fast, simple, auditable.</div>
+    </div>
+    <div class="warn">Without referenced refunds, staff could accidentally refund a full-price item that was originally sold at a discount — costing the restaurant money on every return.</div>
+  </div>
+
+  <div class="card">
+    <h3>Hubworks integration — the full restaurant ecosystem</h3>
+    <div class="plum-box">Plum integrates seamlessly with <strong>Hubworks</strong> — a full ecosystem of restaurant management software that handles everything you need to run a restaurant, all without advanced programming or technical expertise.</div>
+    <div class="tip">Hubworks is the marketplace that connects Plum to tools like employee scheduling, inventory management, payroll, guest management, and more — all from one dashboard.</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0">
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">👥</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Labor Scheduling</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Build and manage staff schedules connected to real-time sales data</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">📦</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Inventory App</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Track stock levels, set alerts, and reduce waste automatically</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">💰</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Payroll</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Integrated payroll that pulls directly from time clock data</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">🕐</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Time Clock App</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Employee clock-in/out integrated with labor cost reporting</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">🚗</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Delivery Marketplace</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">UberEats, Grubhub, DoorDash — all feeding into one dashboard</div>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--rs);padding:12px;text-align:center">
+        <div style="font-size:20px;margin-bottom:5px">🎁</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text)">Guest Management</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">Loyalty, guest profiles, and engagement tools for repeat customers</div>
+      </div>
+    </div>
+    <div class="success">Everything works without advanced programming or technical expertise. Affordable solutions that eliminate the need for extra setups or third-party service searches.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(2)">← Back</button>
+    <button class="btn-next" onclick="goTo(4)">Next: Administration →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 5: ADMINISTRATION
+═══════════════════════════ -->
+<div class="sec" id="s4">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">⚙️</div>
+    <div class="minfo">
+      <h2>Administration: powerful control tools</h2>
+      <p>Menu management, tagging, taxation, franchisee permissions, and global sync</p>
+      <div class="timer-pill">⏱ 8 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">Plum's admin tools give operators <strong>global and site-level control</strong> — the ability to manage every location from one place while still giving individual stores the flexibility they need.</div>
+
+  <div class="card">
+    <h3>Standardized menus — one database, everywhere</h3>
+    <div class="plum-box">Plum uses a <strong>single unified database</strong>. When you make a change — to a price, a menu item, a promotion — it updates everywhere simultaneously: kiosk, handheld POS, online ordering, menu boards, and all third-party platforms.</div>
+    <div class="quote-card">
+      <div class="quote-text">"Prior to implementing Plum, we struggled to manage menus across all our locations. Now we keep everything standardized through the centralized control Plum gave us."</div>
+      <div class="quote-attr"><strong>Famous Dave's</strong> — Multi-location operator</div>
+    </div>
+    <div class="script">
+      <span class="slbl">The "One Update" story — your best admin pitch</span>
+      "I was talking to a franchise owner who used to spend two hours every time he changed a menu item — updating the POS, calling DoorDash separately, updating the website, fixing the kiosk. With Plum, he changes it once and it syncs to every screen and every platform in 10 seconds. He gets two hours back every single week — that's over 100 hours a year."
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Tagging — Plum's most unique admin feature</h3>
+    <div class="plum-box"><strong>Tagging is the only feature of its kind in any POS system.</strong> It lets you operate outside of normal predefined data structures — grouping anything together so you can make bulk changes with a single button press.</div>
+    <div class="tip">You can add tags to almost anything: menu items, locations, discounts, promotions, modifiers. This allows fast, thoughtful edits without having to touch every item individually.</div>
+
+    <div style="margin:12px 0">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em;font-family:'DM Mono',monospace;font-size:11px">Example 1 — Regional coupon deployment</div>
+      <div class="tag-demo">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">You want to run a coupon for only 3 states. Tag the stores:</div>
+        <span class="tag-badge">Southern California</span>
+        <span class="tag-badge">Northern California</span>
+        <span class="tag-badge tag-badge-amber">Texas</span>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px">Apply the coupon to those tags → It activates at every tagged location simultaneously. One action.</div>
+      </div>
+    </div>
+
+    <div style="margin:12px 0">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Example 2 — Ingredient-based discount</div>
+      <div class="tag-demo">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">You want to apply 10% off every dish that contains chicken:</div>
+        <span class="tag-badge tag-badge-green">#chicken</span>
+        <div style="font-size:13px;color:var(--text2);margin-top:8px">Tag all chicken items once → Apply the discount rule to that tag → Every chicken dish gets 10% off automatically. No manually updating 40 menu items.</div>
+      </div>
+    </div>
+    <div class="success">Tagging allows you to assign or edit items across multiple stores with a single button press. No other POS system has this feature.</div>
+  </div>
+
+  <div class="card">
+    <h3>Advanced coupons & discounts</h3>
+    <div class="plum-box">Plum's discount engine lets you set up <strong>complex rules-based discounts that protect profitability</strong> — not just flat percentage-offs that any staff member can misapply.</div>
+    <table class="ftable">
+      <thead><tr><th>Discount type</th><th>How it works</th><th>Business protection</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Channel-based</strong></td><td>Apply discounts only to specific order channels (kiosk only, online only, in-store only)</td><td>Prevents coupon stacking across channels</td></tr>
+        <tr><td><strong>Store/region-based</strong></td><td>Deploy promotions to specific stores, regions, or tagged groups</td><td>Test markets without affecting all locations</td></tr>
+        <tr><td><strong>Auto combo detection</strong></td><td>System detects combo items ordered separately and auto-applies the combo price</td><td>Customers always get the best price; staff don't need to memorize combos</td></tr>
+        <tr><td><strong>Validation rules</strong></td><td>All coupons checked against configured criteria before applying</td><td>Eliminates under-ringing and sweetheart deals</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Advanced taxation</h3>
+    <div class="plum-box">Multi-store tax management from one place — including tax-exempt organizations, non-profits, and locations with different local tax rates.</div>
+    <div style="display:flex;flex-direction:column;gap:9px;margin:10px 0">
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Configure multiple tax rates and assign them to multiple stores</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Site-level configurations for local tax rate overrides</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> Tax-exempt processing for non-profit or institutional accounts</div>
+      <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text)"><span style="color:var(--green);font-size:16px;font-weight:700">✓</span> All tax logic enforced automatically — no manual calculations</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Franchisee groups & permissions</h3>
+    <div class="plum-box">Give franchisees the control they need at a site level — while maintaining your global brand standards and rules from the top down.</div>
+    <div class="vs">
+      <div style="background:var(--plum-l);border:1px solid var(--border-s);border-radius:var(--rs);padding:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--plum-d);margin-bottom:7px">Global (Corporate) Controls</div>
+        <div style="font-size:13.5px;color:var(--plum-d);line-height:1.7">Brand-wide menu standards<br>Pricing floors and ceilings<br>National promotions<br>Core discount rules<br>Tax configurations</div>
+      </div>
+      <div style="background:var(--teal-l);border:1px solid #99f6e4;border-radius:var(--rs);padding:14px">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#164e63;margin-bottom:7px">Site (Franchisee) Controls</div>
+        <div style="font-size:13.5px;color:#164e63;line-height:1.7">Local specials and LTOs<br>Staff permissions and roles<br>Local pricing within rules<br>Store-specific hours/layout<br>Local delivery settings</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(3)">← Back</button>
+    <button class="btn-next" onclick="goTo(5)">Next: Competitive Edge →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 6: COMPETITIVE EDGE
+═══════════════════════════ -->
+<div class="sec" id="s5">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--amber-l)">🏆</div>
+    <div class="minfo">
+      <h2>Competitive edge: why Plum wins</h2>
+      <p>How to handle "I already have Square / Clover / Toast" — and win</p>
+      <div class="timer-pill">⏱ 6 min</div>
+    </div>
+  </div>
+
+  <div class="warn">Never attack a competitor directly. Validate their choice, then use discovery to surface the gap. Owners who feel judged stop listening immediately.</div>
+
+  <div class="card">
+    <h3>Three reasons Plum wins every time</h3>
+    <div class="win-grid">
+      <div class="win-card" style="background:var(--plum-l)">
+        <div class="win-icon">🎯</div>
+        <div class="win-title" style="color:var(--plum-d)">Restaurant-first</div>
+        <div class="win-desc" style="color:var(--plum-d)">Purpose-built for restaurants. IP64 spill-resistant, heat-tested hardware. Not a generic system adapted for food service.</div>
+      </div>
+      <div class="win-card" style="background:var(--teal-l)">
+        <div class="win-icon">🔗</div>
+        <div class="win-title" style="color:#164e63">Unified ecosystem</div>
+        <div class="win-desc" style="color:#164e63">Hardware + software + marketplace apps in one place. Competitors charge extra for integrations Plum includes by default.</div>
+      </div>
+      <div class="win-card" style="background:var(--green-l)">
+        <div class="win-icon">💰</div>
+        <div class="win-title" style="color:var(--green-d)">Lower rates</div>
+        <div class="win-desc" style="color:var(--green-d)">Lower credit card processing rates than Square, Clover, and Toast. Typically saves $200–$400/month — enough to pay for the system itself.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The competitor objection — scripted response</h3>
+    <div class="roleplay">
+      <div class="rphdr">💬 "I already have Clover — it works fine for what I need"</div>
+      <div class="rpbody">
+        <div class="clbl">Owner</div>
+        <div class="bub bub-them">"I'm happy with Clover. It works fine for what I need."</div>
+        <div class="clbl" style="margin-top:8px">Rep — validate first</div>
+        <div class="bub bub-rep">"Those are big names for a reason! Most owners I talk to use them. I'm not here to tell you Clover is a bad system."</div>
+        <div class="clbl" style="margin-top:8px">Rep — clarify the hidden pain</div>
+        <div class="bub bub-rep">"Quick question — when a DoorDash order comes in, does it auto-flow into your POS, or does someone have to retype it manually?"</div>
+        <div class="clbl" style="margin-top:8px">Owner</div>
+        <div class="bub bub-them">"We have to type it in. That's just how it works."</div>
+        <div class="clbl" style="margin-top:8px">Rep — bridge to Plum</div>
+        <div class="bub bub-rep">"That's actually the biggest difference. With Plum, every delivery order from every platform flows directly into your kitchen screen — no tablets, no retyping, no errors. And we typically save owners $200–$400 a month in processing fees on top of that. Would that be worth a 5-minute look?"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Head-to-head comparison</h3>
+    <table class="ftable">
+      <thead><tr><th>What the owner cares about</th><th style="color:#991b1b">Square / Clover / Toast</th><th style="color:#065f46">Plum POS</th></tr></thead>
+      <tbody>
+        <tr><td>Built for restaurants</td><td style="color:#991b1b">Generic POS for any business</td><td style="color:#065f46"><strong>Purpose-built, IP64 hardware</strong></td></tr>
+        <tr><td>Delivery integration</td><td style="color:#991b1b">Extra fees or manual entry</td><td style="color:#065f46"><strong>All apps, built-in, one screen</strong></td></tr>
+        <tr><td>Processing fees</td><td style="color:#991b1b">Higher standard rates (2.6%+)</td><td style="color:#065f46"><strong>Lower rates — saves $200–$400/mo</strong></td></tr>
+        <tr><td>Menu sync across channels</td><td style="color:#991b1b">Update each platform separately</td><td style="color:#065f46"><strong>One update, syncs everywhere</strong></td></tr>
+        <tr><td>Offline payments</td><td style="color:#991b1b">Limited or requires workarounds</td><td style="color:#065f46"><strong>Full Offline Mode — never miss a sale</strong></td></tr>
+        <tr><td>Discount & coupon engine</td><td style="color:#991b1b">Basic percentage-off discounts</td><td style="color:#065f46"><strong>Rules-based, validated, automated</strong></td></tr>
+        <tr><td>Tagging / bulk edits</td><td style="color:#991b1b">Manual item-by-item changes</td><td style="color:#065f46"><strong>Tagging — only POS with this feature</strong></td></tr>
+        <tr><td>Franchise support</td><td style="color:#991b1b">Limited global/site-level control</td><td style="color:#065f46"><strong>Full franchisee permission hierarchy</strong></td></tr>
+        <tr><td>Setup & onboarding</td><td style="color:#991b1b">Self-serve, DIY</td><td style="color:#065f46"><strong>White-glove full-day setup</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Closing tips from the field</h3>
+    <div class="tip-cards">
+      <div class="tip-card">
+        <div class="tip-card-icon">⚡</div>
+        <h4>Lead with speed</h4>
+        <p>Mention that Plum terminals are speed-tested with zero lag during rush hours. "It won't freeze on your busiest Friday night" is a real selling point.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">📱</div>
+        <h4>Simplicity wins</h4>
+        <p>Emphasize the intuitive interface. "If your staff can use a smartphone, they can master Plum in 10 minutes." Reduces the training objection immediately.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">💸</div>
+        <h4>Lead with the math</h4>
+        <p>Owners respond to dollars. Calculate their estimated monthly fee savings on a notepad in front of them. Making it visual makes it real and urgent.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-card-icon">🤝</div>
+        <h4>White-glove switching</h4>
+        <p>"Our team handles the entire menu upload and hardware setup in one afternoon. You don't touch a thing — and you're up before your next dinner rush."</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(4)">← Back</button>
+    <button class="btn-next" onclick="goTo(6)">Take the Certification →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════
+  MODULE 7: CERTIFICATION
+═══════════════════════════ -->
+<div class="sec" id="s6">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">📋</div>
+    <div class="minfo">
+      <h2>Plum POS Certification</h2>
+      <p>Product knowledge · D2D scenarios · Script writing · 80% to pass</p>
+    </div>
+  </div>
+  <div class="plum-box">This certification has <strong>3 parts</strong>: product &amp; hardware multiple choice, real-world D2D scenarios, and open-ended script writing. Score 80%+ on Parts 1 &amp; 2 to earn your certificate.</div>
+
+  <div class="card" id="quizGate">
+    <h3>Trainee Details</h3>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">Please enter your details before starting the certification quiz.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label for="userName" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Full Name</label>
+        <input id="userName" type="text" placeholder="Enter full name" style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+      <div>
+        <label for="userEmail" style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;">Email ID</label>
+        <input id="userEmail" type="email" placeholder="Enter email address" style="width:100%;padding:12px 14px;border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;">
+      </div>
+    </div>
+    <button type="button" class="btn-next" style="margin-top:14px;" onclick="startQuizAccess()">Start Quiz</button>
+  </div>
+
+  <div id="quizContent" style="display:none;">
+    <div id="qForm"></div>
+    <div id="openSection"></div>
+    <button type="button" class="btn-submit" id="submitBtn" onclick="submitQ()" disabled>Submit for certification</button>
+    <div id="certArea"></div>
+  </div>
+
+  <div class="nav-row" style="margin-top:1rem">
+    <button type="button" class="btn-prev" onclick="goTo(5)">← Back to modules</button>
+  </div>
+</div>
+
+</div><!-- /shell -->
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbznUkd-er7518oClTj1mqDLvsAcgybvCzurByPdzmbExhMcvIPJdee2wcjjJPuXcO1W/exec";
+const TRAINING_NAME = "Plum POS — Product Training & Certification";
+const QUIZ_NAME = "Certification Quiz";
+const PASS_PERCENT = 80;
+
+const MCQs = [
+  // Part 1
+  {part:"Part 1 — Product & Hardware",q:"What is the primary function of the Kitchen Display System (KDS)?",o:["Process credit card payments at the table","Replace paper tickets with digital screens for better order accuracy","Track employee clock-in and clock-out times","Manage the restaurant's social media presence"],a:1,e:"The KDS replaces paper tickets with digital screens for kitchen staff, ensuring 100% order accuracy and eliminating misread or lost tickets."},
+  {part:"",q:"If a restaurant's Wi-Fi goes down mid-service, what happens with Plum POS?",o:["The system shuts down completely until the internet returns","It switches to Offline Mode and continues processing transactions securely","It requires the merchant to call support for each transaction","It can only process cash until the connection is restored"],a:1,e:"Plum's Offline Mode keeps the system fully operational during internet outages. All transactions sync automatically when the connection is restored — no sales are ever lost."},
+  {part:"",q:"Which hardware reduces wait times AND automatically boosts upsell revenue on every transaction?",o:["Receipt Printer","Cash Drawer","Self-Ordering Kiosk","Handheld POS"],a:2,e:"The Self-Ordering Kiosk lets guests order at their own pace (no wait) and automatically suggests add-ons every single transaction — consistently, without relying on staff memory."},
+  {part:"",q:"Which peripherals are part of the current Plum product lineup?",o:["Receipt Printer, Cash Drawer, and Customer Facing Display","Receipt Printer, Cash Drawer, and Barcode Scanner","Receipt Printer, Cash Drawer, Barcode Scanner, PAX Credit Card Reader, and Kitchen Printer","Barcode Scanner, PAX Credit Card Reader, and Customer Facing Display"],a:2,e:"Plum's current peripheral lineup includes: Receipt Printer, Cash Drawer, Barcode Scanner, PAX Credit Card Reader, and Kitchen Printer. Customer Facing Displays are not part of the lineup."},
+  {part:"",q:"Order Right™ Technology helped CiCi's Pizza achieve what result?",o:["A 20% reduction in staff headcount","An 8% increase in overall sales revenue per store","A 50% decrease in kitchen ticket times","Elimination of all delivery tablet usage"],a:1,e:"CiCi's Pizza was missing sales opportunities when customers created custom pizzas. Using Order Right™ visual prompts to capture add-ons, they saw an 8% increase in overall sales revenue per store."},
+  {part:"",q:"Cloud-Based Sync means that when an admin updates a menu price, it changes on:",o:["Only the main POS terminal","Only the website and DoorDash","The kiosk, handhelds, online platforms, and menu boards simultaneously","Only platforms updated manually within 24 hours"],a:2,e:"Cloud-Based Sync uses a single unified database. One update propagates instantly to every surface — terminals, kiosks, handhelds, menu boards, and all connected delivery platforms."},
+  {part:"",q:"What makes Plum's Tagging feature unique in the POS industry?",o:["It allows managers to clock in remotely","It is the only POS that offers this feature — enabling bulk changes across items/locations with a single button press","It replaces the need for a KDS entirely","It automatically photographs every dish before serving"],a:1,e:"Tagging allows operators to group any items together and apply changes in bulk with a single action. Plum is the only POS system with this feature — it's a major competitive differentiator."},
+  // Part 2
+  {part:"Part 2 — D2D Scenarios",q:"The Gatekeeper Scenario: A staff member says 'The owner isn't here and I can't take flyers.' Your best move is:",o:["Leave the flyer on the counter and walk out quickly","Ask for the owner's personal cell phone immediately","Ask 'When is the calm before the storm here?' to find the owner's schedule and get their name","Pitch the full product to the staff member to convince them"],a:2,e:"Getting the owner's name and best return time converts a dead visit into a warm one. When you return and ask by name, you're no longer a cold caller — you're a contact who was expected."},
+  {part:"",q:"The Comparison Scenario: A merchant says 'I'm happy with Clover — it works fine.' The best pivot is:",o:["Tell them Clover is a bad system and they're definitely overpaying","Validate Clover, then ask if they still manually re-enter delivery app orders into their POS","Politely walk out — a happy customer is a waste of your time","Offer a 50% hardware discount immediately without asking any questions"],a:1,e:"Never attack a competitor. Validate their choice first ('Big names for a reason!'), then discover the hidden pain — manual delivery entry is Clover's most common gap and Plum's strongest win."},
+  {part:"",q:"The Busy Manager Scenario: 'I'm too busy to talk right now — we have a huge catering order.' The correct response is:",o:["'It will only take 10 minutes, I promise!'","'No problem — I'm here because Plum speeds up those big orders. I'll come back Tuesday at 10 AM. Is Marco the best person to see then?'","Stand in the corner and wait for them to finish","Ask if you can help pack the order so you can talk while they work"],a:1,e:"Acknowledge the situation, deliver a one-sentence value prop tied to their exact current pain (the big order), lock in a specific return time, and get a name. Never beg for time right now."},
+];
+
+const OEQs = [
+  {num:10,q:"The Approach: Write a 3-sentence opening script for a restaurant you've never visited. You must include a Local Drop (referencing a nearby business or neighbor).",hint:"Include: your name + what you're working on + a specific local neighbor reference + a low-commitment ask (60 seconds, not 'a few minutes')",model:"Strong responses include: (1) A name introduction. (2) A specific local neighbor reference — e.g., 'I was just talking to the manager at [nearby restaurant] about their delivery tablet situation…' (3) A specific pain point — delivery, fees, or rush hour chaos. (4) A low-commitment ask — 'just 60 seconds' rather than 'a few minutes.' Responses should NOT lead with the product name or a feature list."},
+  {num:11,q:"Handling the 'Too Expensive' Objection: A merchant likes the technology but says 'The upfront cost for new terminals is just too much for us right now.' Use the Savings Close to respond.",hint:"Include: validate their concern + reframe cost as monthly savings + use a specific dollar figure + conditional close with a yes/no question",model:"Strong responses should: (1) Acknowledge the concern — 'I completely understand.' (2) Reframe upfront cost against monthly savings — 'Based on your volume, we typically save owners $200–$400/month in processing fees alone.' (3) Calculate payback — 'That means the system pays for itself within 60 days.' (4) End with a conditional close — 'If I can put that on paper right now, is there any reason we couldn't move forward today?'"},
+  {num:12,q:"The Order Right™ Pitch: Briefly explain to a restaurant owner how Order Right™ Technology benefits their specific kitchen staff.",hint:"Mention: visual prompts, eliminating human error, reducing wasted food / comp'd meals, and a dollar cost framing",model:"Strong responses should mention: (1) Visual prompts that show kitchen staff exactly what was ordered — no guessing. (2) The direct benefit — reducing or eliminating wrong orders and comp'd meals. (3) A dollar framing — e.g., 'Even 3–4 mistakes a week at $15 each is $200+ a month going out the door.' (4) Optional: the CiCi's result — 8% increase in sales per store from capturing missed add-ons."},
+];
+
+let sel = new Array(MCQs.length).fill(null);
+let done = false;
+let submissionInProgress = false;
+
+function buildQuiz() {
+  const f = document.getElementById('qForm');
+  f.innerHTML = '';
+  let lastPart = '';
+  MCQs.forEach((q, i) => {
+    if (q.part && q.part !== lastPart) {
+      const ph = document.createElement('div');
+      ph.className = 'q-part-hdr';
+      ph.innerHTML = `<strong>${q.part}</strong>Select the best answer for each question.`;
+      f.appendChild(ph); lastPart = q.part;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'qwrap';
+    wrap.innerHTML = `<div class="qnum">Question ${i+1} of ${MCQs.length}</div><div class="qtext">${q.q}</div>`;
+    q.o.forEach((opt, j) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'opt'; btn.id = `q${i}o${j}`;
+      btn.innerHTML = `<div class="radio" id="r${i}${j}"></div><span>${opt}</span>`;
+      if (!done) btn.onclick = () => pick(i, j);
+      wrap.appendChild(btn);
+    });
+    const fb = document.createElement('div'); fb.className = 'qfb'; fb.id = `fb${i}`;
+    wrap.appendChild(fb);
+    f.appendChild(wrap);
+  });
+
+  const oe = document.getElementById('openSection');
+  oe.innerHTML = '';
+  const oeh = document.createElement('div');
+  oeh.className = 'q-part-hdr';
+  oeh.innerHTML = '<strong>Part 3 — Role-Play Script Writing</strong>Draft your responses below. Model answer guides appear after submission.';
+  oe.appendChild(oeh);
+
+  OEQs.forEach((q, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.marginBottom = '1.75rem';
+    wrap.innerHTML = `
+      <div class="qnum">Question ${q.num} of ${MCQs.length + OEQs.length}</div>
+      <div class="qtext">${q.q}</div>
+      <textarea class="open-ta" id="oe${i}" placeholder="Write your response here…" ${done?'disabled':''}></textarea>
+      <div class="open-hint">Hint: ${q.hint}</div>
+      ${done
+        ? `<div class="open-fb" style="display:block" id="oefb${i}"><strong>Model answer guide:</strong><br><br>${q.model}</div>`
+        : `<button type="button" class="open-btn" onclick="showModel(${i})">Show model answer guide</button><div class="open-fb" id="oefb${i}"></div>`
+      }`;
+    oe.appendChild(wrap);
+  });
+  checkAll();
+}
+
+function showModel(i) {
+  const fb = document.getElementById(`oefb${i}`);
+  fb.innerHTML = `<strong>Model answer guide:</strong><br><br>${OEQs[i].model}`;
+  fb.style.display = 'block';
+}
+
+function pick(qi, oi) {
+  if (done) return;
+  sel[qi] = oi;
+  MCQs[qi].o.forEach((_, j) => {
+    document.getElementById(`q${qi}o${j}`).classList.toggle('sel', j === oi);
+    document.getElementById(`r${qi}${j}`).classList.toggle('on', j === oi);
+  });
+  checkAll();
+}
+
+function checkAll() {
+  const btn = document.getElementById('submitBtn');
+  if (!btn) return;
+  const allAnswered = sel.every(v => v !== null);
+  btn.disabled = !allAnswered;
+  btn.style.display = 'block';
+  btn.textContent = allAnswered ? 'Submit for certification' : `Submit for certification (${sel.filter(v => v !== null).length}/${MCQs.length} answered)`;
+}
+
+function getUserName() {
+  const el = document.getElementById('userName');
+  return el ? el.value.trim() : '';
+}
+
+function getUserEmail() {
+  const el = document.getElementById('userEmail');
+  return el ? el.value.trim() : '';
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+  });
+}
+
+function getAnswerSummary() {
+  const mcqSummary = MCQs.map((q, i) => {
+    const chosenIndex = sel[i];
+    const chosenText = chosenIndex !== null ? q.o[chosenIndex] : '';
+    const correctText = q.o[q.a];
+    return `Q${i + 1}: ${q.q} | Selected="${chosenText}" | Correct="${correctText}"`;
+  });
+
+  const oeqSummary = OEQs.map((q, i) => {
+    const input = document.getElementById(`oe${i}`)?.value?.trim() || '';
+    return `Q${q.num}: ${q.q} | User Response="${input}"`;
+  });
+
+  return [...mcqSummary, ...oeqSummary].join(' || ');
+}
+async function sendResultToGoogleSheet(payload) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEBAPP_URL_HERE')) {
+    return { ok: false, message: 'Google Sheet URL is not configured yet.' };
+  }
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const responseText = await response.text();
+    try {
+      const parsed = JSON.parse(responseText);
+      return { ok: parsed.status === 'success', message: parsed.message || 'Submitted', attemptNo: parsed.attemptNo || 1 };
+    } catch (e) {
+      return { ok: response.ok, message: responseText || 'Submitted', attemptNo: 1 };
+    }
+  } catch (error) {
+    return { ok: false, message: error.message || 'Failed to submit', attemptNo: 1 };
+  }
+}
+
+function formatCertificateDate() {
+  return new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function buildCertificateId(attemptNo) {
+  const d = new Date();
+  const y = d.getFullYear().toString().slice(-2);
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const attempt = String(attemptNo || 1).padStart(2, '0');
+  return `PLUM-${y}${m}${day}-${attempt}`;
+}
+
+function downloadCertificateFromForm(scorePercent, attemptNo) {
+  try {
+    const name = getUserName() || 'Participant';
+    downloadCertificate(name, scorePercent, attemptNo);
+  } catch (error) {
+    console.error('Certificate download failed:', error);
+    alert('Certificate download failed. Please check that jsPDF loaded correctly and try again.');
+  }
+}
+
+function downloadCertificate(name, scorePercent, attemptNo) {
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert('PDF library did not load. Please reload the page and try again.');
+    return;
+  }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const centerX = pageWidth / 2;
+  const issuedDate = formatCertificateDate();
+  const certificateId = buildCertificateId(attemptNo);
+  const safeName = (name || 'Participant').trim();
+
+  doc.setFillColor(59, 7, 100);
+  doc.rect(0, 0, pageWidth, pageHeight, 'F');
+  doc.setDrawColor(167, 95, 255);
+  doc.setLineWidth(2);
+  doc.rect(14, 14, pageWidth - 28, pageHeight - 28);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(24);
+  doc.setTextColor(255, 255, 255);
+  doc.text('plum', centerX, 80, { align: 'center' });
+
+  doc.setFontSize(11);
+  doc.setTextColor(170, 255, 50);
+  doc.text('CERTIFICATE OF COMPLETION', centerX, 125, { align: 'center' });
+
+  doc.setFontSize(34);
+  doc.setTextColor(245, 245, 245);
+  doc.text(safeName, centerX, 180, { align: 'center' });
+
+  doc.setDrawColor(170, 255, 50);
+  doc.line(centerX - 80, 198, centerX + 80, 198);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(14);
+  doc.setTextColor(210, 210, 220);
+  doc.text('Successfully completed', centerX, 230, { align: 'center' });
+  doc.setFont('helvetica', 'bold');
+  doc.text(TRAINING_NAME, centerX, 254, { align: 'center' });
+
+  doc.setDrawColor(214, 76, 255);
+  doc.setLineWidth(7);
+  doc.circle(centerX, 340, 54);
+  doc.setFontSize(30);
+  doc.setTextColor(255, 255, 255);
+  doc.text(String(scorePercent), centerX, 350, { align: 'center' });
+  doc.setFontSize(15);
+  doc.setTextColor(170, 255, 50);
+  doc.text('%', centerX, 372, { align: 'center' });
+
+  doc.setFillColor(38, 48, 18);
+  doc.roundedRect(centerX - 42, 400, 84, 24, 12, 12, 'F');
+  doc.setDrawColor(140, 200, 60);
+  doc.roundedRect(centerX - 42, 400, 84, 24, 12, 12);
+  doc.setFontSize(11);
+  doc.text('• PASSED', centerX, 416, { align: 'center' });
+
+  doc.setDrawColor(90, 90, 120);
+  doc.line(190, 468, pageWidth - 190, 468);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(180, 180, 200);
+  doc.text('ATTEMPT', centerX - 140, 500, { align: 'center' });
+  doc.text('DATE ISSUED', centerX, 500, { align: 'center' });
+  doc.text('CERTIFICATE ID', centerX + 140, 500, { align: 'center' });
+  doc.setFontSize(13);
+  doc.setTextColor(245, 245, 245);
+  doc.text(`#${attemptNo || 1}`, centerX - 140, 522, { align: 'center' });
+  doc.text(issuedDate, centerX, 522, { align: 'center' });
+  doc.setFontSize(11);
+  doc.text(certificateId, centerX + 140, 522, { align: 'center' });
+
+  const fileSafeName = safeName.replace(/[^a-z0-9]/gi, '_');
+  doc.save(`Certificate_${fileSafeName}.pdf`);
+}
+
+async function submitQ() {
+  if (submissionInProgress) return;
+  const userName = getUserName();
+  const userEmail = getUserEmail();
+  if (!userName || !userEmail) {
+    alert('Please enter your full name and email before submitting the quiz.');
+    return;
+  }
+  if (sel.some(v => v === null)) {
+    alert('Please answer all multiple choice questions before submitting.');
+    return;
+  }
+
+  submissionInProgress = true;
+  done = true;
+  let score = 0;
+  MCQs.forEach((q, i) => {
+    const correct = q.a, chosen = sel[i];
+    if (chosen === correct) score++;
+    q.o.forEach((_, j) => {
+      const btn = document.getElementById(`q${i}o${j}`);
+      const r = document.getElementById(`r${i}${j}`);
+      if (!btn || !r) return;
+      btn.onclick = null;
+      btn.style.cursor = 'default';
+      btn.classList.remove('sel');
+      if (j === correct) { btn.classList.add('correct'); r.className = 'radio cor'; }
+      else if (j === chosen && chosen !== correct) { btn.classList.add('wrong'); r.className = 'radio err'; }
+    });
+    const fb = document.getElementById(`fb${i}`);
+    fb.style.display = 'block';
+    fb.className = chosen === correct ? 'qfb ok' : 'qfb bad';
+    fb.textContent = (chosen === correct ? '✓ Correct — ' : '✗ Incorrect — ') + q.e;
+  });
+
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+    submitBtn.style.display = 'none';
+  }
+
+  OEQs.forEach((q, i) => {
+    const ta = document.getElementById(`oe${i}`); if (ta) ta.disabled = true;
+    const fb = document.getElementById(`oefb${i}`);
+    if (fb) { fb.innerHTML = `<strong>Model answer guide:</strong><br><br>${q.model}`; fb.style.display = 'block'; }
+  });
+
+  const pct = Math.round((score / MCQs.length) * 100);
+  const pass = pct >= PASS_PERCENT;
+  const payload = {
+    timestamp: new Date().toISOString(),
+    name: userName,
+    email: userEmail,
+    trainingName: TRAINING_NAME,
+    quizName: QUIZ_NAME,
+    totalQuestions: MCQs.length + OEQs.length,
+    correctAnswers: score,
+    scorePercent: pct,
+    result: pass ? 'Pass' : 'Fail',
+    answers: getAnswerSummary()
+  };
+
+  const saveResult = await sendResultToGoogleSheet(payload);
+  const cert = document.getElementById('certArea');
+  cert.style.display = 'block';
+
+  cert.innerHTML = pass
+    ? `<div class="cert">
+        <div class="cert-badge" style="background:var(--plum-l);border:2px solid var(--plum)">🏆</div>
+        <div class="cert-title">Certification Earned!</div>
+        <div class="cert-sub">${TRAINING_NAME}</div>
+        <div class="score-big" style="color:var(--plum)">${pct}%</div>
+        <div style="margin-bottom:1rem"><span class="pill pill-p">${score}/${MCQs.length} correct · Passed</span></div>
+        <div class="cert-detail">
+          <span><strong>Attempt:</strong> #${saveResult.attemptNo || 1}</span>
+          <span><strong>Date:</strong> ${escapeHtml(formatCertificateDate())}</span>
+          <span><strong>ID:</strong> ${escapeHtml(buildCertificateId(saveResult.attemptNo || 1))}</span>
+        </div>
+        <div class="cert-msg">
+          ${saveResult.ok
+            ? `Result saved successfully. Attempt #${saveResult.attemptNo || 1}.`
+            : 'Quiz completed, but record update failed: ' + escapeHtml(saveResult.message)}
+        </div>
+        <button type="button" class="btn-next" style="margin-top:18px;" onclick="downloadCertificateFromForm(${pct}, ${saveResult.attemptNo || 1})">Download Certificate PDF</button>
+      </div>`
+    : `<div class="cert">
+        <div class="cert-badge" style="background:var(--amber-l);border:2px solid var(--amber)">📚</div>
+        <div class="cert-title">Not quite there yet</div>
+        <div class="cert-sub">${PASS_PERCENT}% required · ${score}/${MCQs.length} correct</div>
+        <div class="score-big" style="color:var(--amber)">${pct}%</div>
+        <div style="margin-bottom:1rem"><span class="pill pill-a">${score}/${MCQs.length} correct</span></div>
+        <div class="cert-msg">
+          ${saveResult.ok
+            ? `Attempt saved successfully. Attempt #${saveResult.attemptNo || 1}.`
+            : 'Quiz completed, but record update failed: ' + escapeHtml(saveResult.message)}
+        </div>
+        <button type="button" class="btn-retry" onclick="retry()">Retry Quiz</button>
+      </div>`;
+
+  cert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  submissionInProgress = false;
+}
+
+function retry() {
+  done = false;
+  submissionInProgress = false;
+  sel = new Array(MCQs.length).fill(null);
+  const certArea = document.getElementById('certArea');
+  if (certArea) certArea.innerHTML = '';
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit for certification';
+    submitBtn.style.display = 'block';
+  }
+  const quizContent = document.getElementById('quizContent');
+  if (quizContent) quizContent.style.display = 'block';
+  buildQuiz();
+  document.getElementById('qForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const N = 7;
+function goTo(idx) {
+  document.querySelectorAll('.sec').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  const pct = Math.round(((idx + 1) / N) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = `Module ${idx + 1} of ${N}`;
+  document.getElementById('progPct').textContent = pct + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function startQuizAccess() {
+  const name = getUserName();
+  const email = getUserEmail();
+  if (!name || !email) {
+    alert('Please enter your full name and email before starting the quiz.');
+    return;
+  }
+  const quizGate = document.getElementById('quizGate');
+  const quizContent = document.getElementById('quizContent');
+  if (quizGate) quizGate.style.display = 'none';
+  if (quizContent) quizContent.style.display = 'block';
+  done = false;
+  sel = new Array(MCQs.length).fill(null);
+  buildQuiz();
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  const quizContent = document.getElementById('quizContent');
+  if (quizContent) quizContent.style.display = 'none';
+});
+</script>
+</body>
+</html>
