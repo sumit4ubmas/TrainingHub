@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plum POS — Hardware, Peripheral & Connections Training</title>
+<title>POS — Hardware, Peripheral & Connections Training</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -182,13 +182,13 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
   <div class="card">
     <h3>Main hardware categories</h3>
     <div class="hw-grid">
-      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">POS Terminal</div><div class="hw-desc">Main order entry and management device.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">Handheld POS</div><div class="hw-desc">Portable device for tableside ordering and payment.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">Self-Ordering Kiosk</div><div class="hw-desc">Customer-facing device for self-service and upsells.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-core">Core</div><div class="hw-name">KDS</div><div class="hw-desc">Kitchen screen to manage order preparation.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Printer</div><div class="hw-desc">Prints customer receipts and kitchen tickets.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Label Printer</div><div class="hw-desc">Prints item labels for prepared products, expo, and order accuracy.</div></div>
-      <div class="hw-card"><div class="hw-badge badge-periph">Peripheral</div><div class="hw-name">Cash Drawer</div><div class="hw-desc">Secure cash storage, usually triggered through the printer.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core"> </div><div class="hw-name">POS Terminal</div><div class="hw-desc">Main order entry and management device.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core"> </div><div class="hw-name">Handheld POS</div><div class="hw-desc">Portable device for tableside ordering and payment.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core"> </div><div class="hw-name">Self-Ordering Kiosk</div><div class="hw-desc">Customer-facing device for self-service and upsells.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-core"> </div><div class="hw-name">KDS</div><div class="hw-desc">Kitchen screen to manage order preparation.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph"> </div><div class="hw-name">Printer</div><div class="hw-desc">Prints customer receipts and kitchen tickets.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph"> </div><div class="hw-name">Label Printer</div><div class="hw-desc">Prints item labels for prepared products, expo, and order accuracy.</div></div>
+      <div class="hw-card"><div class="hw-badge badge-periph"> </div><div class="hw-name">Cash Drawer</div><div class="hw-desc">Secure cash storage, usually triggered through the printer.</div></div>
     </div>
   </div>
 
@@ -234,8 +234,8 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
       <tbody>
         <tr><td>Receipt printer</td><td>USB or Ethernet</td><td>Print customer receipt</td></tr>
         <tr><td>Cash drawer</td><td>RJ cable through printer</td><td>Opens after cash transaction</td></tr>
-        <tr><td>Payment terminal</td><td>Network / USB / Bluetooth depending setup</td><td>Take card or contactless payment</td></tr>
-        <tr><td>Kitchen printer / KDS</td><td>LAN / Wi-Fi</td><td>Send order to kitchen</td></tr>
+        <tr><td>Payment terminal</td><td>Ethernet / USB / Bluetooth depending setup</td><td>Take card or contactless payment</td></tr>
+        <tr><td>Kitchen printer / KDS</td><td>Ethernet / Wi-Fi</td><td>Send order to kitchen</td></tr>
         <tr><td>Barcode scanner</td><td>USB / Bluetooth</td><td>Scan retail or packaged items</td></tr>
       </tbody>
     </table>
@@ -476,7 +476,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
       <li>Can replace many kitchen/expo printer workflows in modern stores.</li>
       <li>Expo can use KDS to validate the full order before it is handed to guest, server, or delivery driver.</li>
     </ul>
-    <div class="success">Sales benefit: No lost tickets, less confusion, faster kitchen communication, and stronger visibility than paper-only printer workflows.</div>
+    <div class="success">Sales benefit: Concise ticket info, less confusion, faster kitchen communication, and stronger visibility than paper-only printer workflows.</div>
   </div>
 
   <div class="card">
@@ -485,7 +485,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
       <thead><tr><th>Restaurant type</th><th>KDS value</th></tr></thead>
       <tbody>
         <tr><td>QSR</td><td>Fast prep queue, order timers, station routing</td></tr>
-        <tr><td>Full service</td><td>Course timing, table order visibility, expo control</td></tr>
+        <tr><td>Full service</td><td>Course timing (COMING SOON), table order visibility, expo control</td></tr>
         <tr><td>Pizza</td><td>Track make-line, oven, cut-table flow</td></tr>
         <tr><td>Delivery heavy</td><td>Separate delivery/pickup order queue and timing</td></tr>
       </tbody>
@@ -513,7 +513,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-s
       <thead><tr><th>Connection</th><th>Usually used for</th><th>Best explanation</th></tr></thead>
       <tbody>
         <tr><td><strong>USB</strong></td><td>Receipt printer, label printer, scanner, local peripherals</td><td>Direct wired connection; simple and reliable.</td></tr>
-        <tr><td><strong>Ethernet / LAN</strong></td><td>KDS, kitchen printer, label printer, terminal network</td><td>Wired network; best for stability.</td></tr>
+        <tr><td><strong>Ethernet</strong></td><td>KDS, kitchen printer, label printer, terminal network</td><td>Wired network; best for stability.</td></tr>
         <tr><td><strong>Wi-Fi</strong></td><td>Handheld, tablet, kiosk, KDS</td><td>Wireless connection; flexible but depends on network quality.</td></tr>
         <tr><td><strong>Bluetooth</strong></td><td>Card reader, mobile printer, scanner</td><td>Short-range wireless connection.</td></tr>
         <tr><td><strong>Cloud</strong></td><td>Reporting, menu sync, online orders</td><td>Data syncing and remote access.</td></tr>
@@ -670,11 +670,11 @@ function goTo(i){
 const questions = [
   {q:'What is the primary use of a label printer in restaurant POS operations?', a:['To print employee schedules only','To print product/order labels with guest name, item count, modifications, and assembly details','To open the cash drawer','To replace Wi-Fi'], c:1, ex:'Label printers help identify products, modifications, order type, and item counts for accurate prep and expo assembly.'},
   {q:'What is the POS Terminal best described as?', a:['A kitchen-only display','The main operational hub for orders, payments, reports, and connected devices','Only a cash drawer controller','A customer loyalty camera'], c:1, ex:'The terminal is the main control center for orders, payments, reporting, and peripherals.'},
-  {q:'Which device is best for tableside ordering and payment?', a:['Kitchen Printer','Handheld POS / Tablet','Cash Drawer','Back office router'], c:1, ex:'Handheld POS lets staff take orders and payments at the table.'},
+  {q:'Which device is best for tableside ordering and payment?', a:['Kitchen Printer','Handheld POS','Cash Drawer','Back office router'], c:1, ex:'Handheld POS lets staff take orders and payments at the table.'},
   {q:'What is a key benefit of a self-ordering kiosk?', a:['It removes all reporting','It consistently prompts upsells and reduces counter wait time','It only prints kitchen tickets','It replaces internet service'], c:1, ex:'Kiosks help with speed, self-service, visual menus, and consistent upsells.'},
   {q:'How is a cash drawer usually triggered to open?', a:['Through the receipt printer after a cash sale','By the KDS screen','By online ordering only','By the customer phone'], c:0, ex:'Most cash drawers connect to the receipt printer, which sends the open/kick signal.'},
   {q:'What does KDS stand for?', a:['Kitchen Display System','Key Discount Setup','Kiosk Drawer Service','Kitchen Delivery Sheet'], c:0, ex:'KDS means Kitchen Display System.'},
-  {q:'Which connection is usually most stable for kitchen printers and KDS when available?', a:['Bluetooth','Ethernet / LAN','NFC','Gift card swipe'], c:1, ex:'Ethernet/LAN is usually more stable than wireless for fixed kitchen devices.'},
+  {q:'Which connection is usually most stable for kitchen printers and KDS when available?', a:['Bluetooth','Ethernet','NFC','Gift card swipe'], c:1, ex:'Ethernet is usually more stable than wireless for fixed kitchen devices.'},
   {q:'What should you check first if a printer is not printing?', a:['If the device has power, paper, and correct connection','If the restaurant has a dessert menu','If the drawer has coins','If the server has tips'], c:0, ex:'Basic troubleshooting starts with power, paper, lid, and connection.'},
   {q:'What is the best sales explanation of the POS ecosystem?', a:['One isolated register only','A connected system for orders, kitchen routing, payments, reporting, and customer experience','A printer-only setup','A payment device that does not talk to anything'], c:1, ex:'The value comes from connected front-of-house, kitchen, payments, and reporting.'},
   {q:'Which device helps reduce lost paper tickets and tracks prep progress?', a:['KDS','Cash drawer','Barcode scanner only','Receipt paper roll'], c:0, ex:'KDS digitally displays and manages kitchen orders.'},
