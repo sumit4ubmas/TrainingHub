@@ -302,9 +302,132 @@
       .card { padding: 20px; flex-wrap: wrap; }
       .header-stats { gap: 20px; }
     }
+
+
+    /* ── USER GATE ── */
+    .user-gate {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at top right, rgba(26,58,42,.14), transparent 34%), var(--bg);
+    }
+    .gate-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-hover);
+      padding: 34px;
+    }
+    .gate-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .gate-card p {
+      color: var(--text-secondary);
+      line-height: 1.55;
+      font-size: 14px;
+      margin-bottom: 22px;
+    }
+    .form-row { margin-bottom: 16px; }
+    .form-row label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      letter-spacing: .03em;
+    }
+    .form-row input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 14px;
+      font: inherit;
+      color: var(--text-primary);
+      background: #fff;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-row input:focus {
+      border-color: var(--accent-light);
+      box-shadow: 0 0 0 3px rgba(26,58,42,.10);
+    }
+    .gate-button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      padding: 14px 18px;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+    .gate-button:hover { background: var(--accent-light); transform: translateY(-1px); }
+    .gate-button:disabled { opacity: .65; cursor: wait; transform: none; }
+    .gate-message { min-height: 18px; margin-top: 12px; font-size: 12px; color: #9A3412; }
+    .privacy-note {
+      margin: 14px 0 0 !important;
+      font-size: 11.5px !important;
+      color: var(--text-muted) !important;
+      line-height: 1.45 !important;
+    }
+    .training-shell { display: none; }
+    .training-shell.is-visible { display: block; }
+    .user-chip {
+      position: absolute;
+      right: 24px;
+      top: 18px;
+      z-index: 2;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      color: rgba(255,255,255,.86);
+      padding: 8px 12px;
+      font-size: 12px;
+      backdrop-filter: blur(8px);
+      max-width: min(360px, calc(100vw - 48px));
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .user-chip strong { color: #fff; font-weight: 600; }
+
   </style>
 </head>
 <body>
+
+<div id="userGate" class="user-gate">
+  <form id="userForm" class="gate-card">
+    <h2>Welcome to Training</h2>
+    <p>Please enter your name and company email to access the training modules. Only @altametrics.com and @plumpos.com emails are allowed.</p>
+
+    <div class="form-row">
+      <label for="userName">Full Name</label>
+      <input id="userName" name="name" type="text" placeholder="Enter your full name" required autocomplete="name" />
+    </div>
+
+    <div class="form-row">
+      <label for="userEmail">Email ID</label>
+      <input id="userEmail" name="email" type="email" placeholder="name@altametrics.com or name@plumpos.com" required autocomplete="email" />
+    </div>
+
+    <button id="continueBtn" class="gate-button" type="submit">Continue to Training</button>
+    <div id="gateMessage" class="gate-message" aria-live="polite"></div>
+    <p class="privacy-note">By continuing, you agree that your name, email, IP address, browser/device details, and access time may be recorded for training and audit purposes.</p>
+  </form>
+</div>
+
+<div id="trainingShell" class="training-shell">
+
 
 <header>
   <div class="header-inner">
@@ -406,6 +529,142 @@
   <p>Team Training Hub &mdash; All modules are interactive and browser-based.</p>
   <span class="footer-badge"><span class="dot"></span> All modules available</span>
 </footer>
+
+
+</div>
+
+<script>
+  /**********************************************************************
+   * GOOGLE SHEET CONNECTION
+   * 1) Create a Google Sheet with columns:
+   *    Timestamp, Name, Email, Allowed Domain, IP Address, Page, User Agent
+   * 2) In Google Sheets: Extensions > Apps Script
+   * 3) Paste the Apps Script code shared with this HTML
+   * 4) Deploy > New deployment > Web app
+   * 5) Execute as: Me
+   * 6) Who has access: Anyone
+   * 7) Copy the Web App URL and paste it below
+   **********************************************************************/
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBUj9Mxze2r-6_TYQ8tvjSC9Y2BMUhmP3c-8zh9kFynFdkGu-inY7leXdQqXXaNVewNA/exec";
+
+  const ALLOWED_DOMAINS = ["altametrics.com", "plumpos.com"];
+
+  const userGate = document.getElementById('userGate');
+  const trainingShell = document.getElementById('trainingShell');
+  const userForm = document.getElementById('userForm');
+  const continueBtn = document.getElementById('continueBtn');
+  const gateMessage = document.getElementById('gateMessage');
+
+  function showTraining(user) {
+    userGate.style.display = 'none';
+    trainingShell.classList.add('is-visible');
+
+    const header = document.querySelector('header');
+    if (header && !document.querySelector('.user-chip')) {
+      const chip = document.createElement('div');
+      chip.className = 'user-chip';
+      chip.innerHTML = `Signed in as <strong>${escapeHtml(user.name)}</strong> · ${escapeHtml(user.email)}`;
+      header.appendChild(chip);
+    }
+  }
+
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>'"]/g, function(char) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char];
+    });
+  }
+
+  function isValidEmailFormat(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function getEmailDomain(email) {
+    return email.split('@').pop().toLowerCase();
+  }
+
+  function isAllowedCompanyEmail(email) {
+    if (!isValidEmailFormat(email)) return false;
+    return ALLOWED_DOMAINS.includes(getEmailDomain(email));
+  }
+
+  async function getUserIP() {
+    try {
+      const response = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+      const data = await response.json();
+      return data.ip || 'Unavailable';
+    } catch (error) {
+      return 'Unavailable';
+    }
+  }
+
+  // Remember the user on the same browser so they do not need to enter details every time.
+  // If you want every visit recorded, remove this savedUser block.
+  const savedUser = JSON.parse(localStorage.getItem('trainingHubUser') || 'null');
+  if (savedUser && savedUser.name && savedUser.email && isAllowedCompanyEmail(savedUser.email)) {
+    showTraining(savedUser);
+  } else {
+    localStorage.removeItem('trainingHubUser');
+  }
+
+  userForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('userName').value.trim();
+    const email = document.getElementById('userEmail').value.trim().toLowerCase();
+
+    if (!name) {
+      gateMessage.textContent = 'Please enter your full name.';
+      return;
+    }
+
+    if (!isValidEmailFormat(email)) {
+      gateMessage.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    if (!isAllowedCompanyEmail(email)) {
+      gateMessage.textContent = 'Access is restricted. Please use @altametrics.com or @plumpos.com email only.';
+      return;
+    }
+
+    continueBtn.disabled = true;
+    continueBtn.textContent = 'Saving...';
+    gateMessage.textContent = '';
+
+    const ipAddress = await getUserIP();
+
+    const payload = {
+      name,
+      email,
+      allowedDomain: getEmailDomain(email),
+      ipAddress,
+      page: window.location.href,
+      userAgent: navigator.userAgent,
+      timestamp: new Date().toISOString()
+    };
+
+    try {
+      if (GOOGLE_SCRIPT_URL.includes('PASTE_YOUR_GOOGLE_APPS_SCRIPT')) {
+        throw new Error('Google Apps Script URL is missing.');
+      }
+
+      // no-cors allows a static HTML page hosted on GitHub Pages or opened locally to submit to Apps Script.
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+
+      localStorage.setItem('trainingHubUser', JSON.stringify({ name, email }));
+      showTraining({ name, email });
+    } catch (error) {
+      gateMessage.textContent = 'Unable to save to Google Sheet. Check the Apps Script URL, then try again.';
+      continueBtn.disabled = false;
+      continueBtn.textContent = 'Continue to Training';
+    }
+  });
+</script>
 
 </body>
 </html>
