@@ -728,11 +728,6 @@ function startQuizAccess(){
   if(gate) gate.style.display = 'none';
   if(content) content.style.display = 'block';
   renderQuiz();
-  saveToGoogleSheets(getTraineePayload({
-    eventType:'Quiz Started',
-    result:'Started',
-    totalQuestions:questions.length
-  }));
 }
 
 function submitQuiz(){
