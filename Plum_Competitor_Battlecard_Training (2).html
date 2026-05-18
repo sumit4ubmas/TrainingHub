@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plum POS — Competitor Battlecard Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plum:#6d28d9;--plum-l:#ede9fe;--plum-d:#4c1d95;--plum-m:#7c3aed;
+  --green:#059669;--green-l:#d1fae5;--green-d:#065f46;
+  --red:#dc2626;--red-l:#fee2e2;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --blue:#2563eb;--blue-l:#dbeafe;
+  --teal:#0891b2;--teal-l:#cffafe;
+  --orange:#ea580c;--orange-l:#fff7ed;
+  --bg:#faf9f7;--surface:#fff;
+  --border:#e8e4f0;--border-s:#d0c9e8;
+  --text:#1a1520;--text2:#4a4360;--text3:#8b82a8;
+  --r:12px;--rs:8px;
+  --sh:0 1px 4px rgba(109,40,217,.07),0 4px 16px rgba(109,40,217,.05);
+  --sh2:0 1px 3px rgba(109,40,217,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.65;min-height:100vh}
+.shell{max-width:860px;margin:0 auto;padding:2rem 1.25rem 5rem}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1a0533 0%,#3b0764 40%,#6d28d9 80%,#dc2626 100%);color:#fff;border-radius:18px;padding:2.5rem 2rem 2.25rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.hdr::after{content:'';position:absolute;top:-40px;right:-60px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.05);pointer-events:none}
+.hdr::before{content:'';position:absolute;bottom:-60px;right:60px;width:200px;height:200px;border-radius:50%;background:rgba(220,38,38,.12);pointer-events:none}
+.hdr-tag{display:inline-block;background:rgba(255,255,255,.18);color:rgba(255,255,255,.9);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 12px;border-radius:999px;margin-bottom:10px;border:1px solid rgba(255,255,255,.2)}
+.hdr h1{font-size:27px;font-weight:700;color:#fff;margin-bottom:6px;position:relative}
+.hdr p{font-size:14px;color:rgba(255,255,255,.65);margin-bottom:1.5rem;position:relative}
+.hdr-meta{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hdr-meta span{font-size:13px;color:rgba(255,255,255,.5)}
+.hdr-meta strong{color:rgba(255,255,255,.9);font-weight:500}
+
+/* PROGRESS */
+.prog-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1.25rem;box-shadow:var(--sh2)}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.prog-top span{font-size:13px;color:var(--text2)}
+.prog-top strong{font-size:13px;font-weight:600;color:var(--plum)}
+.prog-track{height:6px;background:#eeecea;border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--plum),var(--red));border-radius:999px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem}
+.tab{padding:7px 13px;border-radius:999px;border:1px solid var(--border-s);background:var(--surface);color:var(--text2);font-family:'Sora',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .18s;white-space:nowrap}
+.tab:hover{border-color:var(--plum);color:var(--plum)}
+.tab.active{background:var(--plum);border-color:var(--plum);color:#fff}
+.tab.done{border-color:var(--plum);color:var(--plum);background:var(--plum-l)}
+
+/* SECTIONS */
+.sec{display:none;animation:fi .3s ease}
+.sec.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODULE HEADER */
+.mhdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.micon{width:50px;height:50px;border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.minfo{flex:1}
+.minfo h2{font-size:20px;font-weight:700;color:var(--text);margin-bottom:3px}
+.minfo p{font-size:13px;color:var(--text2)}
+.timer-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 11px;border-radius:999px;background:var(--amber-l);color:var(--amber);font-size:12px;font-weight:600;margin-top:6px}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh2)}
+.card h3{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px}
+
+/* CALLOUTS */
+.tip{background:var(--blue-l);border-left:3px solid var(--blue);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#1e3a8a;line-height:1.6}
+.warn{background:var(--amber-l);border-left:3px solid var(--amber);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#78350f;line-height:1.6}
+.success{background:var(--green-l);border-left:3px solid var(--green);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:var(--green-d);line-height:1.6}
+.plum-box{background:var(--plum-l);border-left:3px solid var(--plum);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:var(--plum-d);line-height:1.6}
+.danger-box{background:var(--red-l);border-left:3px solid var(--red);border-radius:0 var(--rs) var(--rs) 0;padding:10px 14px;margin:10px 0;font-size:13.5px;color:#7f1d1d;line-height:1.6}
+.tp-box{background:linear-gradient(135deg,#3b0764,#6d28d9);border-radius:var(--r);padding:14px 18px;margin:12px 0;position:relative;overflow:hidden}
+.tp-box::after{content:'"';position:absolute;right:16px;top:-8px;font-size:80px;color:rgba(255,255,255,.08);font-family:Georgia,serif;line-height:1}
+.tp-box-lbl{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:5px}
+.tp-box p{font-size:14px;color:#fff;line-height:1.7;font-style:italic;position:relative}
+
+/* COMPETITOR OVERVIEW CARDS */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.comp-card{border:1px solid var(--border);border-radius:var(--rs);padding:14px;background:var(--surface);cursor:pointer;transition:all .2s}
+.comp-card:hover{border-color:var(--plum);transform:translateY(-2px);box-shadow:var(--sh)}
+.comp-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.comp-type{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:999px;display:inline-block;margin-bottom:7px}
+.type-cloud{background:var(--blue-l);color:#1e3a8a}
+.type-legacy{background:#f3e8ff;color:#6b21a8}
+.comp-tag{font-size:12px;color:var(--text2);line-height:1.5}
+.comp-priority{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:#dc2626;margin-top:6px}
+
+/* BATTLECARD LAYOUT */
+.bc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.bc-weak{background:var(--red-l);border:1px solid #fca5a5;border-radius:var(--rs);padding:16px}
+.bc-strong{background:var(--green-l);border:1px solid #6ee7b7;border-radius:var(--rs);padding:16px}
+.bc-head{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.bc-weak .bc-head{color:#7f1d1d}
+.bc-strong .bc-head{color:#064e3b}
+.bc-item{display:flex;gap:9px;align-items:flex-start;margin-bottom:10px;font-size:13.5px;line-height:1.55}
+.bc-item:last-child{margin-bottom:0}
+.bc-item-title{font-weight:600;display:block;margin-bottom:2px}
+
+/* FEATURE COMPARISON TABLE */
+.ftable{width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0}
+.ftable th{background:#f5f3fb;padding:8px 10px;text-align:left;font-weight:600;font-size:10px;color:var(--text2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.ftable td{padding:9px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;line-height:1.45}
+.ftable tr:last-child td{border-bottom:none}
+.ftable tr:hover td{background:#faf8ff}
+.ftable td:first-child{font-weight:600;color:var(--text2);font-size:12px;white-space:nowrap}
+.check{color:var(--green);font-weight:700;font-size:14px}
+.cross{color:var(--red);font-weight:700;font-size:14px}
+.partial{color:var(--amber);font-weight:600;font-size:11px}
+.plum-col{background:#faf8ff;font-weight:700;color:var(--plum-d)}
+
+/* PRICING TABLE */
+.ptable{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0}
+.ptable th{background:linear-gradient(135deg,#3b0764,#6d28d9);color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em}
+.ptable th:first-child{border-radius:var(--rs) 0 0 0}
+.ptable th:last-child{border-radius:0 var(--rs) 0 0}
+.ptable td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.5;font-size:12px}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:#faf8ff}
+.ptable .plum-row td{background:#f5f3fb;font-weight:600;color:var(--plum-d)}
+.ptable .plum-row td:first-child{border-left:3px solid var(--plum)}
+.price-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:700;white-space:nowrap}
+.pb-green{background:var(--green-l);color:var(--green-d)}
+.pb-red{background:var(--red-l);color:#7f1d1d}
+.pb-amber{background:var(--amber-l);color:#78350f}
+.pb-plum{background:var(--plum-l);color:var(--plum-d)}
+
+/* SCRIPT */
+.script{background:#f5f3fb;border:1px solid var(--border-s);border-radius:var(--rs);padding:14px 16px;margin:10px 0;font-size:14px;color:var(--text);line-height:1.8;font-style:italic}
+.slbl{font-family:'DM Mono',monospace;font-size:10px;font-style:normal;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px}
+
+/* CHAT BUBBLES */
+.roleplay{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin:12px 0}
+.rphdr{background:#f5f3fb;padding:10px 14px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.rpbody{padding:14px;display:flex;flex-direction:column;gap:5px}
+.clbl{font-size:11px;color:var(--text3);margin-bottom:2px;font-family:'DM Mono',monospace}
+.bub{padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.6;max-width:85%}
+.bub-them{background:#f0eef8;color:var(--text);border-radius:4px 12px 12px 12px}
+.bub-rep{background:var(--plum);color:#fff;border-radius:12px 4px 12px 12px;margin-left:auto}
+
+/* STEP BUBBLE */
+.stepn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--plum);color:#fff;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-block{display:flex;gap:13px;align-items:flex-start;margin-bottom:14px}
+.step-block:last-child{margin-bottom:0}
+.steplbl{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+
+/* QUIZ */
+.q-part-hdr{background:var(--plum-l);border-radius:var(--rs);padding:10px 14px;margin:1.5rem 0 1rem;font-size:13px;color:var(--plum-d)}
+.q-part-hdr strong{font-weight:700;display:block;margin-bottom:2px}
+.qnum{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:4px}
+.qtext{font-size:15px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.5}
+.qwrap{margin-bottom:1.75rem}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:14px;font-family:'Sora',sans-serif;cursor:pointer;transition:all .15s;margin-bottom:6px;text-align:left;width:100%;line-height:1.5}
+.opt:hover{border-color:var(--plum);background:var(--plum-l)}
+.opt.sel{border-color:var(--plum);background:var(--plum-l);color:var(--plum-d)}
+.opt.correct{border-color:var(--green);background:var(--green-l);color:#064e3b}
+.opt.wrong{border-color:var(--red);background:var(--red-l);color:#7f1d1d}
+.radio{width:17px;height:17px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.radio.on{border-color:var(--plum);background:var(--plum)}
+.radio.on::after,.radio.cor::after,.radio.err::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff}
+.radio.cor{border-color:var(--green);background:var(--green)}
+.radio.err{border-color:var(--red);background:var(--red)}
+.qfb{font-size:13px;padding:9px 13px;border-radius:var(--rs);margin-top:6px;display:none;line-height:1.55}
+.qfb.ok{background:var(--green-l);color:var(--green-d);border-left:3px solid var(--green)}
+.qfb.bad{background:var(--red-l);color:#7f1d1d;border-left:3px solid var(--red)}
+.open-ta{width:100%;min-height:90px;padding:12px 14px;border-radius:var(--rs);border:1px solid var(--border-s);background:var(--surface);font-family:'Sora',sans-serif;font-size:14px;color:var(--text);resize:vertical;line-height:1.6;transition:border-color .15s}
+.open-ta:focus{outline:none;border-color:var(--plum)}
+.open-hint{font-size:12px;color:var(--text3);margin-top:5px;font-style:italic}
+.open-btn{margin-top:8px;padding:7px 16px;background:var(--plum-l);color:var(--plum-d);border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s}
+.open-btn:hover{background:var(--plum);color:#fff}
+.open-fb{font-size:13px;padding:10px 13px;border-radius:var(--rs);margin-top:8px;display:none;line-height:1.6;background:var(--plum-l);color:var(--plum-d);border-left:3px solid var(--plum)}
+.btn-submit{display:block;padding:12px 28px;background:var(--plum);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:1.25rem;transition:all .2s}
+.btn-submit:hover:not(:disabled){background:var(--plum-d)}
+.btn-submit:disabled{background:#c4b8e8;cursor:not-allowed;opacity:.65}
+
+/* NAV */
+.nav-row{display:flex;gap:10px;justify-content:flex-end;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+.btn-next{padding:9px 22px;background:var(--plum);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-next:hover{background:var(--plum-d)}
+.btn-prev{padding:9px 22px;background:var(--surface);color:var(--text2);border:1px solid var(--border-s);border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;cursor:pointer;transition:all .15s}
+.btn-prev:hover{border-color:var(--text2);color:var(--text)}
+
+/* CERT */
+.cert{text-align:center;padding:3rem 2rem;border:1px solid var(--border);border-radius:var(--r);margin-top:1.5rem;background:var(--surface)}
+.cert-badge{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:42px;margin:0 auto 1.25rem}
+.cert-title{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.cert-sub{font-size:14px;color:var(--text2);margin-bottom:.75rem}
+.score-big{font-size:52px;font-weight:700;margin:.5rem 0}
+.pill{display:inline-block;padding:4px 14px;border-radius:999px;font-size:12px;font-weight:700}
+.pill-p{background:var(--plum-l);color:var(--plum-d)}
+.pill-a{background:var(--amber-l);color:var(--amber)}
+.cert-msg{font-size:14px;color:var(--text2);max-width:400px;margin:1rem auto 0;line-height:1.75}
+.cert-detail{display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
+.cert-detail span{font-size:13px;color:var(--text2)}
+.btn-retry{margin-top:1.25rem;padding:10px 24px;background:var(--amber);color:#fff;border:none;border-radius:var(--rs);font-family:'Sora',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+
+@media(max-width:600px){
+  .comp-grid,.bc-grid{grid-template-columns:1fr}
+  .hdr h1{font-size:20px}
+  .ftable,.ptable{font-size:11px}
+  .tabs{gap:4px}
+  .tab{padding:6px 10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-tag">Plum POS — Sales Battlecard Training</div>
+  <h1>Selling Plum Against the Competition</h1>
+  <p>A field guide for sales reps — identify competitor weaknesses, highlight Plum's advantages, and convert restaurant owners</p>
+  <div class="hdr-meta">
+    <span>⏱ <strong>45 minutes</strong></span>
+    <span>🎯 <strong>6 competitors covered</strong></span>
+    <span>💬 <strong>Live objection scripts</strong></span>
+    <span>🎓 <strong>Certification quiz</strong></span>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-wrap">
+  <div class="prog-top"><span id="progLabel">Module 1 of 9</span><strong id="progPct">11%</strong></div>
+  <div class="prog-track"><div class="prog-fill" id="progBar" style="width:11%"></div></div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="goTo(0)">1 · Know Your Competitors</button>
+  <button class="tab" onclick="goTo(1)">2 · Cost & Features</button>
+  <button class="tab" onclick="goTo(2)">3 · vs. Toast</button>
+  <button class="tab" onclick="goTo(3)">4 · vs. Clover</button>
+  <button class="tab" onclick="goTo(4)">5 · vs. Square</button>
+  <button class="tab" onclick="goTo(5)">6 · vs. Shift4</button>
+  <button class="tab" onclick="goTo(6)">7 · vs. Legacy</button>
+  <button class="tab" onclick="goTo(7)">8 · Pricing Breakdown</button>
+  <button class="tab" onclick="goTo(8)">📋 Certification</button>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 1: KNOW YOUR COMPETITORS
+═══════════════════════════════════ -->
+<div class="sec active" id="s0">
+  <div class="mhdr">
+    <div class="micon" style="background:#fee2e2">🎯</div>
+    <div class="minfo">
+      <h2>Know your competitors</h2>
+      <p>The systems you'll encounter in the field — and how to categorize them</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="danger-box"><strong>Top Priority:</strong> Toast and Clover are the most frequently encountered competitors in the field. Master these two first. Every other competitor is secondary.</div>
+
+  <div class="card">
+    <h3>Cloud-based competitors — most common in the field</h3>
+    <div class="comp-grid">
+      <div class="comp-card" onclick="goTo(2)">
+        <span class="comp-type type-cloud">Cloud-Based</span>
+        <div class="comp-name">Toast</div>
+        <div class="comp-tag">Most common competitor. Strong brand recognition, but notoriously weak support and expensive add-ons.</div>
+        <div class="comp-priority">🔴 Top Priority — See Module 3</div>
+      </div>
+      <div class="comp-card" onclick="goTo(3)">
+        <span class="comp-type type-cloud">Cloud-Based</span>
+        <div class="comp-name">Clover</div>
+        <div class="comp-tag">Strong presence in mom-and-pop restaurants. Reseller model creates massive support gaps you can exploit.</div>
+        <div class="comp-priority">🔴 Top Priority — See Module 4</div>
+      </div>
+      <div class="comp-card" onclick="goTo(4)">
+        <span class="comp-type type-cloud">Cloud-Based</span>
+        <div class="comp-name">Square</div>
+        <div class="comp-tag">Popular with small operators. Clunky interface, high card rates, and roots as a retail tool — not built for restaurants.</div>
+        <div style="font-size:11px;font-weight:700;color:#d97706;margin-top:6px">🟡 Secondary — See Module 5</div>
+      </div>
+      <div class="comp-card" onclick="goTo(5)">
+        <span class="comp-type type-cloud">Cloud-Based</span>
+        <div class="comp-name">Shift4</div>
+        <div class="comp-tag">Hidden fees and disorganized onboarding frustrate merchants. Costs far exceed what vendor materials suggest.</div>
+        <div style="font-size:11px;font-weight:700;color:#d97706;margin-top:6px">🟡 Secondary — See Module 6</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Legacy (on-premise) competitors — entrenched but aging</h3>
+    <div class="comp-grid">
+      <div class="comp-card" onclick="goTo(6)">
+        <span class="comp-type type-legacy">Legacy / On-Premise</span>
+        <div class="comp-name">Aloha</div>
+        <div class="comp-tag">Deeply entrenched legacy system. High upfront cost, complex training, and restrictive contracts. Owners are frustrated but don't know there's a better option.</div>
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-top:6px">🟣 Legacy — See Module 7</div>
+      </div>
+      <div class="comp-card" onclick="goTo(6)">
+        <span class="comp-type type-legacy">Legacy / On-Premise</span>
+        <div class="comp-name">Micros (Oracle)</div>
+        <div class="comp-tag">Oracle-owned legacy stack. Security vulnerabilities, opaque pricing, and painfully slow support tickets.</div>
+        <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-top:6px">🟣 Legacy — See Module 7</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The field mindset: how to approach any competitor conversation</h3>
+    <div class="step-block">
+      <span class="stepn">1</span>
+      <div><div class="steplbl">Never attack directly</div>Validate their current choice first. "That's a well-known system for a reason." Owners who feel judged stop listening immediately.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">2</span>
+      <div><div class="steplbl">Discover the hidden pain</div>Ask questions that surface what their current system can't do. Every competitor has a gap — your job is to find the one that hurts most.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">3</span>
+      <div><div class="steplbl">Bridge to Plum's strength</div>Once you find the pain, bridge directly to Plum's matching advantage. One problem, one solution, one outcome. Don't list features.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">4</span>
+      <div><div class="steplbl">Close with proof</div>Name a local restaurant or known brand that made the switch. Social proof closes the deal that logic opened.</div>
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn-next" onclick="goTo(1)">Next: Cost & Features →</button></div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 2: COST & FEATURES COMPARISON
+═══════════════════════════════════ -->
+<div class="sec" id="s1">
+  <div class="mhdr">
+    <div class="micon" style="background:#d1fae5">💰</div>
+    <div class="minfo">
+      <h2>Plum costs less & does more</h2>
+      <p>Side-by-side cost and feature comparison across all competitors</p>
+      <div class="timer-pill">⏱ 6 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">Use this module as a quick reference before any conversation. Know the gaps — so when an owner mentions their current system, you already know what it can't do.</div>
+
+  <div class="card">
+    <h3>Cost comparison at a glance</h3>
+    <div style="overflow-x:auto">
+    <table class="ftable">
+      <thead>
+        <tr>
+          <th>Cost Category</th>
+          <th style="background:#f0eeff;color:#4c1d95">Plum ✦</th>
+          <th>Toast</th>
+          <th>Clover</th>
+          <th>Square</th>
+          <th>Shift4</th>
+          <th>Aloha</th>
+          <th>Micros</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>One-time cost</td>
+          <td class="plum-col"><span class="price-badge pb-green">$0–$1,000</span></td>
+          <td>Separate hardware purchase</td>
+          <td>Separate hardware purchase</td>
+          <td>Card processing focus</td>
+          <td><span class="price-badge pb-amber">$250 warranty fee</span></td>
+          <td><span class="price-badge pb-red">High install cost</span></td>
+          <td><span class="price-badge pb-red">High install cost</span></td>
+        </tr>
+        <tr>
+          <td>Monthly cost</td>
+          <td class="plum-col"><span class="price-badge pb-green">$0–$700</span></td>
+          <td><span class="price-badge pb-red">~$550/mo with features</span></td>
+          <td><span class="price-badge pb-amber">$210 all-in</span></td>
+          <td>Volume-dependent</td>
+          <td><span class="price-badge pb-amber">$165/mo fixed + PCI ($325/yr per device)</span></td>
+          <td>Licensing fees</td>
+          <td>Licensing fees</td>
+        </tr>
+        <tr>
+          <td>Credit card rates</td>
+          <td class="plum-col"><span class="price-badge pb-green">2.2% + $0.15</span></td>
+          <td><span class="price-badge pb-red">1.75–3.5%+ per type</span></td>
+          <td>2.3–3.5%</td>
+          <td><span class="price-badge pb-red">Volume-dependent, opaque</span></td>
+          <td><span class="price-badge pb-red">4.5% total effective</span></td>
+          <td>Fixed (provider-set)</td>
+          <td>Fixed (provider-set)</td>
+        </tr>
+        <tr>
+          <td>Training</td>
+          <td class="plum-col"><span class="price-badge pb-green">Included</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+          <td><span class="price-badge pb-red">External required</span></td>
+        </tr>
+        <tr>
+          <td>Support</td>
+          <td class="plum-col"><span class="price-badge pb-green">24/7 direct</span></td>
+          <td><span class="price-badge pb-amber">7AM–12AM EST only</span></td>
+          <td><span class="price-badge pb-red">Reseller-dependent</span></td>
+          <td><span class="price-badge pb-red">Limited hours</span></td>
+          <td><span class="price-badge pb-red">Reseller-dependent</span></td>
+          <td><span class="price-badge pb-red">Reseller-dependent</span></td>
+          <td><span class="price-badge pb-red">Reseller-dependent</span></td>
+        </tr>
+        <tr>
+          <td>Next-day deposits</td>
+          <td class="plum-col"><span class="price-badge pb-green">Available</span></td>
+          <td><span class="price-badge pb-amber">~2.5% extra fee</span></td>
+          <td><span class="price-badge pb-amber">1.75% extra fee</span></td>
+          <td>Standard only</td>
+          <td>Standard only</td>
+          <td>Standard only</td>
+          <td>Standard only</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Feature availability comparison</h3>
+    <div style="overflow-x:auto">
+    <table class="ftable">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th style="background:#f0eeff;color:#4c1d95">Plum ✦</th>
+          <th>Toast</th>
+          <th>Clover</th>
+          <th>Square</th>
+          <th>Shift4</th>
+          <th>Aloha</th>
+          <th>Micros</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Online ordering</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="partial">+$150/mo</span></td>
+          <td><span class="check">✓</span> <small style="color:#059669">Included</small></td>
+          <td><span class="cross">✗ No native</span></td>
+          <td><span class="check">✓</span> <small style="color:#059669">Included</small></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="partial">Middleware</span></td>
+        </tr>
+        <tr>
+          <td>Loyalty program</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="partial">+$50/mo</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="partial">+cost</span></td>
+        </tr>
+        <tr>
+          <td>Integrated kiosk</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="cross">✗ 3rd party only</span></td>
+          <td><span class="cross">✗ 3rd party only</span></td>
+          <td><span class="cross">✗ 3rd party only</span></td>
+        </tr>
+        <tr>
+          <td>Handheld devices</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">Limited</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">+cost</span></td>
+          <td><span class="partial">+cost</span></td>
+        </tr>
+        <tr>
+          <td>Drive-thru support</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Digital signage</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="partial">Limited</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="partial">3rd party</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Mobile app</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="partial">No all-in-one</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Lifetime warranty</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+        <tr>
+          <td>Knowledge base</td>
+          <td class="plum-col"><span class="check">✓</span></td>
+          <td><span class="check">✓</span></td>
+          <td><span class="partial">Limited</span></td>
+          <td><span class="partial">Limited</span></td>
+          <td><span class="partial">Limited</span></td>
+          <td><span class="cross">✗</span></td>
+          <td><span class="cross">✗</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="tip">Drive-thru support is Plum's clearest feature differentiator. <strong>No other competitor offers it natively.</strong> Use this when pitching to QSRs and fast-food operators.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(0)">← Back</button>
+    <button class="btn-next" onclick="goTo(2)">Next: vs. Toast →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 3: vs. TOAST
+═══════════════════════════════════ -->
+<div class="sec" id="s2">
+  <div class="mhdr">
+    <div class="micon" style="background:#fee2e2">🍞</div>
+    <div class="minfo">
+      <h2>Plum vs. Toast</h2>
+      <p>Most common competitor in the field — learn every weakness cold</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="danger-box"><strong>Toast is your #1 competitor.</strong> You will encounter it constantly. Know every weakness, every counter, and every script on this page by heart.</div>
+
+  <div class="card">
+    <h3>Toast weaknesses vs. Plum advantages</h3>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Toast Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Terrible support</span>Limited hours — 7AM to 12AM EST only. Long wait times, slow emergency resolution. If your restaurant goes down at 1AM on a Saturday, you're on your own.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Expensive add-ons</span>Common features cost extra. Online ordering: $150/mo. Third-party integration: $75/mo. Loyalty program: $50/mo. Monthly subscription: $90/mo. It adds up fast.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Inflexible rates</span>One rate option — rates climb as you add features. Next-day deposits cost an additional ~2.5% fee. No flexibility for the merchant.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">24/7 human support</span>Friendly, trained staff available around the clock. Fast emergency resolution — included at no extra charge. A restaurant that's down less earns more.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Flexible pricing</span>Choose your payment model. Low equipment costs, no surprise charges. Features are included — not sold back to you one by one.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Better merchant services</span>Flexible and consistent rates. Next-day deposits available without the punishing extra fee.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Toast real-world pricing (what they actually pay)</h3>
+    <div class="danger-box">Toast's advertised pricing is deceptively low. The real monthly cost hits <strong>$550/mo</strong> once you add hardware, devices, and the features every restaurant actually needs.</div>
+    <div style="background:#f5f3fb;border-radius:var(--rs);padding:14px;font-size:13.5px">
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Equipment (all-in)</span><span style="font-weight:600">$185/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Per device fee (e.g. 1 additional device)</span><span style="font-weight:600;color:var(--red)">+$50/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Online ordering / delivery integration</span><span style="font-weight:600;color:var(--red)">+$150/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Third-party integrations</span><span style="font-weight:600;color:var(--red)">+$75/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Loyalty program</span><span style="font-weight:600;color:var(--red)">+$50/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)"><span>Software subscription</span><span style="font-weight:600;color:var(--red)">+$90/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid #fca5a5;margin-top:4px"><span style="font-weight:700">Realistic total (hardware + subscription + apps)</span><span style="font-weight:700;color:var(--red);font-size:15px">~$550/mo</span></div>
+    </div>
+    <div style="background:#f5f3fb;border-radius:var(--rs);padding:12px 14px;margin-top:10px;font-size:13px;color:var(--text2)">
+      <strong style="color:var(--text);display:block;margin-bottom:5px">Processing rates:</strong>
+      1.75% debit + $0.02/swipe &nbsp;·&nbsp; 2.9% credit + $0.01/swipe &nbsp;·&nbsp; 3.5% + $0.15 keyed &amp; AMEX &nbsp;·&nbsp; Next-day deposits available at ~2.5% fee
+    </div>
+    <div class="success">Plum's full-featured setup starts at a fraction of this. When you show this math on paper in front of an owner, deals close.</div>
+  </div>
+
+  <div class="card">
+    <h3>Handling the Toast objection</h3>
+    <div class="roleplay">
+      <div class="rphdr">💬 "We use Toast and it works fine for us"</div>
+      <div class="rpbody">
+        <div class="clbl">Owner</div>
+        <div class="bub bub-them">"We've been on Toast for two years. It works fine."</div>
+        <div class="clbl" style="margin-top:8px">Rep — validate + probe support</div>
+        <div class="bub bub-rep">"Toast is a big name for a reason — totally get it. Quick question: have you ever had to call their support after midnight? Or on a Sunday morning before your brunch rush?"</div>
+        <div class="clbl" style="margin-top:8px">Owner</div>
+        <div class="bub bub-them">"Actually yeah, we had an issue one night and couldn't get anyone for hours."</div>
+        <div class="clbl" style="margin-top:8px">Rep — bridge to Plum</div>
+        <div class="bub bub-rep">"That's the one thing we hear constantly from Toast customers. Plum has 24/7 live support — real people, not a ticket queue. And honestly, when you add up what Toast charges for online ordering, loyalty, and integrations on top of the hardware, most owners are paying around $550 a month before a single transaction. I can show you what that looks like on paper and compare it to what Plum costs all-in. Takes two minutes."</div>
+      </div>
+    </div>
+    <div class="tp-box">
+      <span class="tp-box-lbl">Talking Point</span>
+      <p>"A restaurant that's down less earns more. Lead with uptime and support reliability — then show the real monthly cost comparison on paper."</p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(1)">← Back</button>
+    <button class="btn-next" onclick="goTo(3)">Next: vs. Clover →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 4: vs. CLOVER
+═══════════════════════════════════ -->
+<div class="sec" id="s3">
+  <div class="mhdr">
+    <div class="micon" style="background:#d1fae5">🍀</div>
+    <div class="minfo">
+      <h2>Plum vs. Clover</h2>
+      <p>Strong in mom-and-pop restaurants — exploit the reseller support gap</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">Clover's biggest liability is its <strong>reseller-dependent support model</strong>. Clover doesn't support restaurants directly — they route everything through third-party resellers with variable quality and extra fees.</div>
+
+  <div class="card">
+    <h3>Clover weaknesses vs. Plum advantages</h3>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Clover Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Hit-or-miss support</span>Support routed through resellers — variable hours, few knowledgeable staff, long resolution times, and extra fees just to get problems fixed.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Deposits cost extra</span>Next-day deposits require an additional 1.75% fee. Card processing options are rigid with little flexibility for the merchant.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Can't handle complexity</span>Designed for simple operations — modifications and complex ordering workflows can't be handled by Clover's interface. Fine for a coffee shop, not for a full-service restaurant.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Staffed help desk, always on</span>24/7 direct phone access to trained support staff. Problems get solved fast — and it's completely free for all Plum users. No reseller in the middle.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Enhanced merchant services</span>Flexible card processing — owners choose the rate structure that works for them. Next-day funding available without a punishing surcharge.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Designed for all operations</span>Plum's intuitive UI handles complex modifications, large parties, split checks, and custom ordering workflows — while still generating extra revenue through upsells.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Handling the Clover objection</h3>
+    <div class="roleplay">
+      <div class="rphdr">💬 "I'm happy with Clover — it works fine for what I need"</div>
+      <div class="rpbody">
+        <div class="clbl">Owner</div>
+        <div class="bub bub-them">"I've had Clover for three years. No complaints."</div>
+        <div class="clbl" style="margin-top:8px">Rep — validate + probe support gap</div>
+        <div class="bub bub-rep">"Big names for a reason — absolutely. When you've had a system issue though, who do you call? Is it Clover directly, or someone else?"</div>
+        <div class="clbl" style="margin-top:8px">Owner</div>
+        <div class="bub bub-them">"There's some reseller company I'm supposed to call. Half the time I can't even reach them."</div>
+        <div class="clbl" style="margin-top:8px">Rep — expose the real pain</div>
+        <div class="bub bub-rep">"That's exactly what I hear from Clover customers. You're paying $210 a month — and yes, that includes online ordering and loyalty — but you're getting your support from a middleman who may or may not pick up. With Plum, you call us directly — 24/7, trained staff, no extra fees. And when a DoorDash order comes in, does that flow straight into your Clover, or does someone retype it?"</div>
+        <div class="clbl" style="margin-top:8px">Owner</div>
+        <div class="bub bub-them">"We have to enter it manually..."</div>
+        <div class="clbl" style="margin-top:8px">Rep — close</div>
+        <div class="bub bub-rep">"That's the second issue. Plum pulls every delivery order directly into the kitchen — no tablets, no manual entry. And we typically save owners $150–$300 a month in fees. Would that be worth a 5-minute look?"</div>
+      </div>
+    </div>
+    <div class="tp-box">
+      <span class="tp-box-lbl">Talking Point</span>
+      <p>"A restaurant that's down less earns more. Lead with uptime, support reliability, and intuitive UI Design."</p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(2)">← Back</button>
+    <button class="btn-next" onclick="goTo(4)">Next: vs. Square →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 5: vs. SQUARE
+═══════════════════════════════════ -->
+<div class="sec" id="s4">
+  <div class="mhdr">
+    <div class="micon" style="background:#fef3c7">⬛</div>
+    <div class="minfo">
+      <h2>Plum vs. Square</h2>
+      <p>Popular with small operators — but built for retail, not restaurants</p>
+      <div class="timer-pill">⏱ 4 min</div>
+    </div>
+  </div>
+
+  <div class="warn">Square has shifted its focus away from POS and is now geared mainly towards card processing — where before they were a significant POS player. Their restaurant features are an afterthought, and owners paying volume-dependent rates are often overpaying significantly as volumes grow.</div>
+
+  <div class="card">
+    <h3>Square weaknesses vs. Plum advantages</h3>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Square Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Slow, inconsistent support</span>Long waits, conflicting guidance, and very hard to reach in emergencies. Not built for the urgency of a restaurant going down mid-service.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Clunky interface</span>Slow order entry and limited menu customization reduce table turnover and hourly sales. Staff takes longer — and that time costs money.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Hidden, high card rates</span>Volume-dependent fees with little transparency. Owners often don't know what they're actually paying until they dig into their statements.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Lack of restaurant features</span>Square's retail roots mean no drive-thru support, no integrated kiosk, limited complex discount management, and no native online ordering.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">24/7 live support</span>Trained staff available by phone — resolves issues quickly every time.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Intuitive UI</span>Staff onboard with minimal training. Faster ordering means more customers served per hour — a direct revenue impact.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Transparent, flexible rates</span>Consistent pricing with clear terms plus next-day deposits for improved cash flow.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Built for restaurants</span>Drive-thru support, integrated kiosk, complex discount and menu management, handheld POS — all native, not bolted on.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tp-box">
+      <span class="tp-box-lbl">Talking Point</span>
+      <p>"Plum's speed translates directly to more revenue. The Return on Investment increases when you add in lower card costs."</p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(3)">← Back</button>
+    <button class="btn-next" onclick="goTo(5)">Next: vs. Shift4 →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 6: vs. SHIFT4
+═══════════════════════════════════ -->
+<div class="sec" id="s5">
+  <div class="mhdr">
+    <div class="micon" style="background:#fff7ed">4️⃣</div>
+    <div class="minfo">
+      <h2>Plum vs. Shift4</h2>
+      <p>Hidden fees and poor onboarding — show the true monthly cost</p>
+      <div class="timer-pill">⏱ 4 min</div>
+    </div>
+  </div>
+
+  <div class="danger-box">Shift4's real-world costs are far higher than their marketing materials suggest. <strong>Walk through the fee stack in detail</strong> — this is your strongest weapon against Shift4.</div>
+
+  <div class="card">
+    <h3>Shift4 weaknesses vs. Plum advantages</h3>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Shift4 Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Annual fees that catch merchants off guard</span>While the monthly fixed total is $165/mo, the $325/yr PCI compliance fee per device ($650/yr for 2 CC devices) and $250/yr warranty/insurance fee are billed annually and often surprise merchants. Over a full year, these add $900 in charges on top of the monthly bill.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Poor support & onboarding</span>Disorganized setup, little instruction, slow technical resolution requiring repeated escalations. Getting started is frustrating and staying up is unreliable.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Enhanced merchant services</span>No hidden fees. Flexible rates and next-day deposits. Know exactly what you're paying from day one — no surprises ever.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Fast 24/7 support</span>Trained support, an intuitive UI, and issues resolved quickly every time. No repeated escalations, no disorganized onboarding.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The Shift4 fee stack — show this math</h3>
+    <div style="background:#fff1f2;border:1px solid #fca5a5;border-radius:var(--rs);padding:14px;font-size:13.5px">
+      <div style="font-weight:700;color:#7f1d1d;margin-bottom:10px">What a Shift4 merchant actually pays (2 CC devices):</div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fecdd3"><span>Equipment ($90/mo all-in)</span><span style="font-weight:600;color:var(--red)">$90/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fecdd3"><span>CC service fee</span><span style="font-weight:600;color:var(--red)">$30/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fecdd3"><span>CC device fee ($15 × 2 devices)</span><span style="font-weight:600;color:var(--red)">$30/mo</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fecdd3"><span>One-time warranty &amp; insurance (annual)</span><span style="font-weight:600;color:var(--amber)">$250/yr</span></div>
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #fecdd3"><span>PCI compliance fee — $325/yr × 2 devices</span><span style="font-weight:600;color:var(--amber)">$650/yr</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-top:2px solid #fca5a5;margin-top:4px"><span style="font-weight:700">Fixed monthly total (before processing)</span><span style="font-weight:700;color:var(--red);font-size:15px">$165/mo</span></div>
+    </div>
+    <div style="background:#f5f3fb;border-radius:var(--rs);padding:12px 14px;margin-top:10px;font-size:13px;color:var(--text2)">
+      <strong style="color:var(--text);display:block;margin-bottom:5px">Processing rates:</strong>
+      2.75% + 1.8% interchange = <strong>4.5% total</strong> on CC &nbsp;·&nbsp; 2.9% AMEX/others + interchange &nbsp;·&nbsp; $0.15 swipe fee
+    </div>
+    <div class="success" style="margin-top:10px"><strong>What's included:</strong> No additional fees for 3rd party integrations, loyalty program, online ordering, mobile app, offline processing, or any software apps. No money required upfront — but the annual PCI fee ($650 for 2 devices) and warranty ($250) are real costs to factor in.</div>
+    <div class="tp-box" style="margin-top:12px">
+      <span class="tp-box-lbl">Talking Point</span>
+      <p>"Walk through Shift4's total monthly cost — high card rates plus hidden fees add up fast. Show Plum's all-in pricing as the clear, transparent alternative."</p>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(4)">← Back</button>
+    <button class="btn-next" onclick="goTo(6)">Next: vs. Legacy →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 7: vs. LEGACY (ALOHA + MICROS)
+═══════════════════════════════════ -->
+<div class="sec" id="s6">
+  <div class="mhdr">
+    <div class="micon" style="background:#f3e8ff">🏛️</div>
+    <div class="minfo">
+      <h2>Plum vs. Legacy systems</h2>
+      <p>Aloha and Micros — entrenched but aging, ripe for conversion</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">Restaurants on legacy systems are often the most frustrated owners you'll meet — they just don't know there's a better option. <strong>Your job is to show them the door.</strong></div>
+
+  <div class="card">
+    <h3>Aloha — weaknesses vs. Plum</h3>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Aloha Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Legacy software</span>High upfront cost, hardware failure risk, clunky UI, and restrictive long-term contracts. Every breakdown is an expensive emergency.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Complex & costly to run</span>Demands specialized external training. Staff onboarding is slow, operational costs are higher, and every change requires IT involvement.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Missing customer-facing tools</span>No integrated kiosk, no efficient drive-thru support. These missing features directly decrease revenue for the restaurant every day.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages vs. Aloha</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Cloud-native solution</span>Lower install cost, built-in redundancy, and an intuitive UI. No specialized hardware to fail, no on-premise servers to maintain.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Cost savings everywhere</span>Less upfront investment, fewer points of failure, no hidden fees, flexible payment models, and clear rate structures.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Modern features built in</span>Efficient menu design, integrated kiosks, mobile app support. Staff train in minutes, not hours.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tp-box">
+      <span class="tp-box-lbl">Aloha Talking Point</span>
+      <p>"Lead with simplicity and total cost. Aloha is a system working against the owner, not for them."</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Micros (Oracle) — weaknesses vs. Plum</h3>
+    <div class="danger-box"><strong>Micros systems have been flagged in security alerts.</strong> This is a real, credible talking point about card transaction safety and customer data liability. Use it carefully but confidently.</div>
+    <div class="bc-grid">
+      <div class="bc-weak">
+        <div class="bc-head">❌ Micros Weaknesses</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Security risk</span>Micros systems have been flagged in security alerts — a real liability for card transactions and customer data. Oracle ownership adds layers of bureaucracy to any resolution.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Opaque costs</span>Real-world fee complexity far exceeds what vendor materials claim. Unclear long-term costs, slow support tickets, and unresolved issues that drag on for weeks.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Legacy hardware risk</span>High upfront cost, hardware failure risk, and clunky UI that requires specialized knowledge to operate and maintain.</div>
+        </div>
+      </div>
+      <div class="bc-strong">
+        <div class="bc-head">✅ Plum Advantages vs. Micros</div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Secure by design</span>PCI-compliant, chargeback protection, and a dedicated payments team. Secure payments mean less money lost to fraud and breaches.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Total transparency</span>No hidden fees, cloud-based infrastructure with lower upfront costs, and full data accessibility. You always know what you're paying.</div>
+        </div>
+        <div class="bc-item">
+          <div><span class="bc-item-title">Modern features built in</span>Efficient menu design, integrated kiosks, mobile application support. Simple, fast, and built for how restaurants actually operate today.</div>
+        </div>
+      </div>
+    </div>
+    <div class="tp-box">
+      <span class="tp-box-lbl">Micros Talking Point</span>
+      <p>"Emphasize Plum's security posture and transparent pricing. Micros's legacy architecture is a liability — Plum is built for the modern restaurant."</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>How to open a legacy system conversation</h3>
+    <div class="script">
+      <span class="slbl">Opening line for Aloha or Micros owners</span>
+      "I noticed you're on [Aloha/Micros] — you've clearly been in this business a long time. I'm not here to tell you your system is bad. But I talk to a lot of owners on legacy systems who are spending thousands a year on maintenance and training that they could be putting back into the restaurant. Would it be worth 5 minutes to see what's changed in POS technology in the last few years?"
+    </div>
+    <div class="tip">Legacy owners feel loyal to systems they've used for years. Respect that loyalty, then redirect it toward what they're losing — not what they have.</div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(5)">← Back</button>
+    <button class="btn-next" onclick="goTo(7)">Next: Pricing Breakdown →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 8: FULL PRICING BREAKDOWN
+═══════════════════════════════════ -->
+<div class="sec" id="s7">
+  <div class="mhdr">
+    <div class="micon" style="background:#d1fae5">📊</div>
+    <div class="minfo">
+      <h2>Full pricing breakdown</h2>
+      <p>Real-world numbers — know these before every conversation</p>
+      <div class="timer-pill">⏱ 5 min</div>
+    </div>
+  </div>
+
+  <div class="plum-box">These are <strong>actual market rates</strong> — not vendor brochure numbers. Use this data when owners ask "how do you compare on price?" Put it on paper in front of them.</div>
+
+  <div class="card">
+    <h3>Competitor pricing — real-world data</h3>
+    <div style="overflow-x:auto">
+    <table class="ptable">
+      <thead>
+        <tr>
+          <th>Vendor</th>
+          <th>One-Time Fees</th>
+          <th>Monthly Fees</th>
+          <th>Processing Rates</th>
+          <th>Next-Day Deposits</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="plum-row">
+          <td>Plum ✦</td>
+          <td>$0–$1,000 (flexible)</td>
+          <td>$0–$700 (choose your plan)<br><small>+ $433.90/mo for equipment bundle</small></td>
+          <td>2.2% + $0.15/swipe + interchange<br><small>(Cash discounting available)</small></td>
+          <td><span class="price-badge pb-green">Available</span></td>
+        </tr>
+        <tr>
+          <td>Toast</td>
+          <td>Hardware purchase required</td>
+          <td>$185/mo equipment (all-in) + $50/device/mo<br><small>Add-ons push total to <strong>~$550/mo</strong> with features</small></td>
+          <td>1.75% debit + $0.02/swipe<br>2.9% credit + $0.01/swipe<br>3.5% + $0.15 keyed &amp; AMEX</td>
+          <td><span class="price-badge pb-red">~2.5% extra fee</span></td>
+        </tr>
+        <tr>
+          <td>Clover</td>
+          <td>Hardware purchase required</td>
+          <td>$210/mo all-in (equipment + software)<br><small>Includes: online ordering, 3rd party integration, back-office reporting, mobile apps, loyalty + gift card</small></td>
+          <td>2.3% + $0.10 credit swipe<br>3.5% + $0.10 manual entry<br>3.5% + $0.10 AMEX</td>
+          <td><span class="price-badge pb-amber">1.75% extra fee</span></td>
+        </tr>
+        <tr>
+          <td>Square</td>
+          <td>None (card processing focus)</td>
+          <td>N/A — geared mainly towards card processing now</td>
+          <td>Volume-dependent, highly variable<br><small>Originally strong in POS; now primarily a card processor. Rates can be significant at higher volumes.</small></td>
+          <td><span class="price-badge pb-amber">Standard only</span></td>
+        </tr>
+        <tr>
+          <td>Shift4</td>
+          <td>$250/yr warranty &amp; insurance (one-time annual)</td>
+          <td>$90/mo equipment + $30 CC service + $30 device fees = <strong>$165/mo fixed</strong><br><small>+ $325/yr PCI per device ($650/yr for 2 devices)</small></td>
+          <td>2.75% + 1.8% interchange = 4.5% total CC<br>2.9% AMEX/others + interchange<br>$0.15 swipe fee</td>
+          <td><span class="price-badge pb-amber">Standard only</span></td>
+        </tr>
+        <tr>
+          <td>Aloha</td>
+          <td>High installation cost</td>
+          <td>Licensing fees</td>
+          <td>Fixed (provider-set)</td>
+          <td><span class="price-badge pb-red">Standard only</span></td>
+        </tr>
+        <tr>
+          <td>Micros (Oracle)</td>
+          <td>High installation cost</td>
+          <td>Licensing fees</td>
+          <td>Fixed (provider-set)</td>
+          <td><span class="price-badge pb-red">Standard only</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Plum's included features vs. competitor add-on costs</h3>
+    <div style="background:#f5f3fb;border-radius:var(--rs);padding:14px;font-size:13.5px">
+      <div style="font-weight:700;color:var(--plum-d);margin-bottom:10px">What Toast charges extra — Plum includes:</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin-bottom:6px">Toast add-on costs</div>
+          <div style="font-size:13px;color:var(--text2);line-height:2">Online ordering: <strong style="color:var(--red)">$150/mo</strong><br>Third-party integration: <strong style="color:var(--red)">$75/mo</strong><br>Loyalty program: <strong style="color:var(--red)">$50/mo</strong><br>Software subscription: <strong style="color:var(--red)">$90/mo</strong></div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green-d);margin-bottom:6px">Plum all-in pricing</div>
+          <div style="font-size:13px;color:var(--text2);line-height:2">Online ordering: <strong style="color:var(--green)">$79.99/mo</strong><br>Third-party integration: <strong style="color:var(--green)">$49.99/mo</strong><br>Loyalty program: <strong style="color:var(--green)">$79.99/mo</strong><br>Reporting + mobile: <strong style="color:var(--green)">Included</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="success" style="margin-top:10px">On just online ordering + third-party integrations alone, Plum saves an owner <strong>$175/mo ($2,100/year)</strong> compared to Toast. Combined with lower processing rates on volume, total annual savings can reach <strong>$3,000–$5,000+</strong> depending on the restaurant's transaction volume.</div>
+  </div>
+
+  <div class="card">
+    <h3>The savings conversation — how to run the math live</h3>
+    <div class="step-block">
+      <span class="stepn">1</span>
+      <div><div class="steplbl">Ask for their monthly volume</div>"Roughly what do you process in credit card transactions per month?"</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">2</span>
+      <div><div class="steplbl">Calculate their current processing cost</div>Multiply their volume by their current rate. Example: $50,000 × 3.5% (Toast) = $1,750/mo in card fees.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">3</span>
+      <div><div class="steplbl">Calculate Plum's cost</div>$50,000 × 2.2% + $0.15 × transactions ≈ significantly lower. Show the difference on paper.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">4</span>
+      <div><div class="steplbl">Add the add-on savings</div>If they're paying Toast for integrations + loyalty, add another $200+ to the monthly savings column.</div>
+    </div>
+    <div class="step-block">
+      <span class="stepn">5</span>
+      <div><div class="steplbl">Close with the annual number</div>"That's [monthly savings] × 12 = [annual savings]. Is there any reason we couldn't put that money back in your pocket starting next month?"</div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn-prev" onclick="goTo(6)">← Back</button>
+    <button class="btn-next" onclick="goTo(8)">Take the Certification →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+  MODULE 9: CERTIFICATION QUIZ
+═══════════════════════════════════ -->
+<div class="sec" id="s8">
+  <div class="mhdr">
+    <div class="micon" style="background:var(--plum-l)">📋</div>
+    <div class="minfo">
+      <h2>Competitor Battlecard Certification</h2>
+      <p>Competitor knowledge · Objection handling · Live scenario scripts · 80% to pass</p>
+    </div>
+  </div>
+
+  <div class="plum-box">This certification has <strong>3 parts</strong>: competitor knowledge multiple choice, real-world battlecard scenarios, and open-ended script writing. Score 80%+ on Parts 1 &amp; 2 to earn your certificate.</div>
+
+  <div id="quizArea">
+    <div id="qForm"></div>
+    <div id="openSection"></div>
+    <button class="btn-submit" id="submitBtn" onclick="submitQ()" disabled>Submit for certification</button>
+  </div>
+  <div id="certArea"></div>
+
+  <div class="nav-row" style="margin-top:1rem">
+    <button class="btn-prev" onclick="goTo(7)">← Back to modules</button>
+  </div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+const MCQs = [
+  // Part 1 — Competitor Knowledge
+  {part:"Part 1 — Competitor Knowledge",q:"Which two competitors are designated as 'Top Priority' in the field?",o:["Square and Shift4","Aloha and Micros","Toast and Clover","Toast and Square"],a:2,e:"Toast and Clover are the most frequently encountered competitors in the field. They should be mastered first — every other competitor is secondary."},
+  {part:"",q:"What is Clover's most exploitable weakness according to the battlecard?",o:["High credit card processing rates","Their reseller-dependent support model creates variable hours, extra fees, and unreliable resolution","They don't support handheld devices","They have no loyalty program"],a:1,e:"Clover routes all support through third-party resellers — meaning hours, knowledge, and fees vary wildly. Restaurants often can't reach anyone when they have an urgent issue. This is your primary attack vector against Clover."},
+  {part:"",q:"Toast's support is available during which hours only?",o:["24/7 like Plum","Monday–Friday, business hours only","7AM–12AM EST — not overnight, not all weekend","Weekdays only, 9AM–5PM"],a:2,e:"Toast support is limited to 7AM–12AM EST. If a restaurant goes down at 1AM on a Saturday night, they have no support. Plum offers 24/7 live human support at no extra charge."},
+  {part:"",q:"Which feature does Plum offer natively that NO competitor currently supports?",o:["Handheld POS devices","Loyalty program","Drive-thru support","Online ordering"],a:2,e:"Drive-thru support is Plum's clearest exclusive differentiator. Every competitor listed — Toast, Clover, Square, Shift4, Aloha, and Micros — has no native drive-thru feature."},
+  {part:"",q:"What is Shift4's approximate effective total credit card rate?",o:["1.75% — competitive with Clover","2.2% — same as Plum","2.9% — standard market rate","4.5% total (2.75% + 1.8% interchange)"],a:3,e:"Shift4's effective rate is 4.5% — 2.75% plus 1.8% interchange — making it the highest processing rate of any competitor. This is a powerful talking point when showing the savings math."},
+  {part:"",q:"What security concern is unique to Micros (Oracle) that you should use as a talking point?",o:["Their system doesn't support EMV chip cards","Micros systems have been flagged in security alerts — a real liability for card transactions and customer data","They charge extra for PCI compliance","They don't support contactless payments"],a:1,e:"Micros systems have been flagged in known security alerts, creating real liability for card transactions and customer data. Combined with Oracle's bureaucratic resolution process, this is a credible and serious talking point."},
+  // Part 2 — Scenario-Based
+  {part:"Part 2 — Battlecard Scenarios",q:"An owner says 'We use Toast and it works fine.' What is your best first move?",o:["Immediately show them the pricing comparison table","Tell them Toast is overpriced and losing them money","Validate Toast first, then ask: 'Have you ever needed support after midnight or on a Sunday morning before your brunch rush?'","Ask them to cancel Toast immediately and sign with Plum today"],a:2,e:"Never attack directly. Validate first, then probe for the hidden pain — Toast's overnight and weekend support gap is your strongest entry point. Let the owner surface the problem themselves."},
+  {part:"",q:"An owner on Shift4 says 'My fees seem fine.' How do you respond?",o:["Accept it and move on — they're happy","Walk through the full cost: $165/mo fixed (equipment + CC service + device fees), then highlight the $650/yr PCI compliance fee and $250/yr warranty billed annually on top","Tell them they're wrong and show the comparison table immediately","Ask if they'd like a free trial of Plum"],a:1,e:"Shift4's $165/mo fixed fee may seem reasonable, but the annual fees — $650/yr PCI compliance ($325 per CC device × 2) and $250/yr warranty/insurance — are often a surprise. The full annual cost is $1,980 fixed + $900 in annual fees = ~$2,880+ before processing. That's the number to put on paper."},
+  {part:"",q:"An owner on Aloha says 'I've been on this system for 10 years, I'm not switching.' How do you open the conversation?",o:["Tell them their system is old and obsolete","Respect the loyalty, then ask: 'Would it be worth 5 minutes to see what's changed in POS technology in the last few years?'","Leave immediately — long-tenured owners won't switch","Offer a 50% discount immediately to incentivize change"],a:1,e:"Legacy owners feel loyal to their systems. You respect that loyalty, then redirect it: 'You've clearly been in this business a long time. Would it be worth 5 minutes to see what's changed?' This opens the door without triggering defensiveness."},
+  {part:"",q:"Which approach correctly describes the 4-step competitor conversion framework?",o:["Attack → Feature dump → Discount → Close","Validate → Discover the hidden pain → Bridge to Plum's strength → Close with proof","Price comparison → Feature comparison → Support comparison → Close","Walk in → Show the competitor table → Quote pricing → Leave a card"],a:1,e:"The correct sequence is: (1) Validate their current system, (2) Discover the specific pain their system creates, (3) Bridge that pain to Plum's matching advantage, (4) Close with social proof. Never start with an attack."},
+];
+
+const OEQs = [
+  {num:11,q:"The Toast Support Objection: An owner says 'Toast has been fine for us — we haven't had any major issues.' Write a response that uncovers a potential support gap and pivots to Plum's advantage.",hint:"Validate → probe with a specific question about after-hours or weekend support → bridge to Plum's 24/7 staffed support → add cost comparison",model:"Strong responses include: (1) Validation — 'Toast is a well-known system for a reason.' (2) A probing question — 'Have you ever had an issue at 1AM or before a Sunday brunch rush?' or 'When Toast charges you for online ordering at $150/mo, do you know exactly what you're paying for features vs. base service?' (3) Bridge to Plum — 24/7 support included, no extra fees for common features. (4) Optional: the real monthly cost math ($185 equipment + add-ons = ~$550/mo). Responses should NOT attack Toast directly before validating."},
+  {num:12,q:"The Savings Math Pitch: An owner says 'I process about $40,000 per month on Clover.' Walk them through a live savings calculation comparing Clover's rates to Plum's rates.",hint:"Use Clover's rate (2.3% + $0.10) vs. Plum's rate (2.2% + $0.15) — calculate both, show the monthly difference, then annualize it",model:"Strong responses should: (1) Calculate Clover: $40,000 × 2.3% + ($0.10 × estimated transactions) ≈ $920+ in card fees. (2) Calculate Plum: $40,000 × 2.2% + ($0.15 × transactions) ≈ $880+. (3) Add next-day deposit savings — Clover charges 1.75% extra, Plum includes it. (4) Annualize the difference and present it as money going back in the owner's pocket. (5) Close with: 'Is there any reason we couldn't start saving you that money next month?' Note: actual savings will vary based on transaction count."},
+  {num:13,q:"The Legacy Opener: You walk into a restaurant and see an Aloha system behind the counter. Write your opening approach — from the door through the first 60 seconds.",hint:"Use the pattern interrupt, reference that you recognize their system, lead with the cost/simplicity angle, and ask for 5 minutes",model:"Strong responses include: (1) A 'pattern interrupt' opener — 'I'll be brief — I know you're mid-service.' (2) System recognition — 'I noticed you're on Aloha. You've clearly been in this business a long time.' (3) A respect-based pivot — 'I'm not here to tell you it's a bad system. But I talk to a lot of operators on legacy systems who are spending thousands on maintenance and training they could put back into the restaurant.' (4) A low-commitment ask — 'Would it be worth 5 minutes to see what's changed in POS technology in the last few years?' Responses should NOT lead with 'Aloha is outdated' or 'you should switch.'"},
+];
+
+let sel = new Array(MCQs.length).fill(null);
+let done = false;
+
+function buildQuiz() {
+  const f = document.getElementById('qForm');
+  f.innerHTML = '';
+  let lastPart = '';
+  MCQs.forEach((q, i) => {
+    if (q.part && q.part !== lastPart) {
+      const ph = document.createElement('div');
+      ph.className = 'q-part-hdr';
+      ph.innerHTML = `<strong>${q.part}</strong>Select the best answer for each question.`;
+      f.appendChild(ph); lastPart = q.part;
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'qwrap';
+    wrap.innerHTML = `<div class="qnum">Question ${i+1} of ${MCQs.length}</div><div class="qtext">${q.q}</div>`;
+    q.o.forEach((opt, j) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt'; btn.id = `q${i}o${j}`;
+      btn.innerHTML = `<div class="radio" id="r${i}${j}"></div><span>${opt}</span>`;
+      if (!done) btn.onclick = () => pick(i, j);
+      wrap.appendChild(btn);
+    });
+    const fb = document.createElement('div'); fb.className = 'qfb'; fb.id = `fb${i}`;
+    wrap.appendChild(fb);
+    f.appendChild(wrap);
+  });
+
+  const oe = document.getElementById('openSection');
+  oe.innerHTML = '';
+  const oeh = document.createElement('div');
+  oeh.className = 'q-part-hdr';
+  oeh.innerHTML = '<strong>Part 3 — Live Script Writing</strong>Draft your responses. Model answer guides appear after submission.';
+  oe.appendChild(oeh);
+  OEQs.forEach((q, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.marginBottom = '1.75rem';
+    wrap.innerHTML = `
+      <div class="qnum">Question ${q.num} of ${MCQs.length + OEQs.length}</div>
+      <div class="qtext">${q.q}</div>
+      <textarea class="open-ta" id="oe${i}" placeholder="Write your response here…" ${done?'disabled':''}></textarea>
+      <div class="open-hint">Hint: ${q.hint}</div>
+      ${done
+        ? `<div class="open-fb" style="display:block" id="oefb${i}"><strong>Model answer guide:</strong><br><br>${q.model}</div>`
+        : `<button class="open-btn" onclick="showModel(${i})">Show model answer guide</button><div class="open-fb" id="oefb${i}"></div>`}`;
+    oe.appendChild(wrap);
+  });
+  checkAll();
+}
+
+function showModel(i) {
+  const fb = document.getElementById(`oefb${i}`);
+  fb.innerHTML = `<strong>Model answer guide:</strong><br><br>${OEQs[i].model}`;
+  fb.style.display = 'block';
+}
+
+function pick(qi, oi) {
+  if (done) return;
+  sel[qi] = oi;
+  MCQs[qi].o.forEach((_, j) => {
+    document.getElementById(`q${qi}o${j}`).classList.toggle('sel', j === oi);
+    document.getElementById(`r${qi}${j}`).classList.toggle('on', j === oi);
+  });
+  checkAll();
+}
+
+function checkAll() {
+  const btn = document.getElementById('submitBtn');
+  const answered = sel.filter(v => v !== null).length;
+  const all = sel.every(v => v !== null);
+  btn.disabled = !all;
+  btn.textContent = all ? 'Submit for certification' : `Submit for certification (${answered}/${MCQs.length} answered)`;
+}
+
+function submitQ() {
+  if (sel.some(v => v === null)) { alert('Please answer all multiple choice questions before submitting.'); return; }
+  done = true;
+  let score = 0;
+  MCQs.forEach((q, i) => {
+    const correct = q.a, chosen = sel[i];
+    if (chosen === correct) score++;
+    q.o.forEach((_, j) => {
+      const btn = document.getElementById(`q${i}o${j}`);
+      const r = document.getElementById(`r${i}${j}`);
+      btn.onclick = null; btn.style.cursor = 'default'; btn.classList.remove('sel');
+      if (j === correct) { btn.classList.add('correct'); r.className = 'radio cor'; }
+      else if (j === chosen && chosen !== correct) { btn.classList.add('wrong'); r.className = 'radio err'; }
+    });
+    const fb = document.getElementById(`fb${i}`);
+    fb.style.display = 'block';
+    fb.className = chosen === correct ? 'qfb ok' : 'qfb bad';
+    fb.textContent = (chosen === correct ? '✓ Correct — ' : '✗ Incorrect — ') + q.e;
+  });
+  document.getElementById('submitBtn').style.display = 'none';
+  OEQs.forEach((q, i) => {
+    const ta = document.getElementById(`oe${i}`); if (ta) ta.disabled = true;
+    const fb = document.getElementById(`oefb${i}`);
+    if (fb) { fb.innerHTML = `<strong>Model answer guide:</strong><br><br>${q.model}`; fb.style.display = 'block'; }
+  });
+  const pct = Math.round((score / MCQs.length) * 100);
+  const pass = pct >= 80;
+  const cert = document.getElementById('certArea');
+  cert.style.display = 'block';
+  if (pass) {
+    cert.innerHTML = `<div class="cert">
+      <div class="cert-badge" style="background:var(--plum-l);border:2px solid var(--plum)">🏆</div>
+      <div class="cert-title">Battlecard Certification Earned!</div>
+      <div class="cert-sub">Plum POS — Competitor Analysis & Sales Battlecard</div>
+      <div class="score-big" style="color:var(--plum)">${pct}%</div>
+      <div style="margin-bottom:1rem"><span class="pill pill-p">${score}/${MCQs.length} correct on Parts 1 & 2 · Passed</span></div>
+      <div class="cert-detail">
+        <span>Competitor knowledge ✓</span>
+        <span>Toast & Clover ✓</span>
+        <span>Square & Shift4 ✓</span>
+        <span>Legacy systems ✓</span>
+        <span>Pricing & savings math ✓</span>
+      </div>
+      <div class="cert-msg">You're ready to win deals in the field against any competitor. Remember: validate first, discover the pain, bridge to Plum, close with proof. Now go earn those deals.</div>
+    </div>`;
+  } else {
+    cert.innerHTML = `<div class="cert">
+      <div class="cert-badge" style="background:var(--amber-l);border:2px solid var(--amber)">📚</div>
+      <div class="cert-title">Not quite there yet</div>
+      <div class="cert-sub">80% required · ${score}/${MCQs.length} correct</div>
+      <div class="score-big" style="color:var(--amber)">${pct}%</div>
+      <div style="margin-bottom:1rem"><span class="pill pill-a">${score}/${MCQs.length} correct</span></div>
+      <div class="cert-msg">Review the highlighted answers and revisit the modules where you missed. Each wrong answer has an explanation — read it carefully before retrying.</div>
+      <button class="btn-retry" onclick="retry()">Retry Quiz</button>
+    </div>`;
+  }
+  cert.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function retry() {
+  done = false; sel = new Array(MCQs.length).fill(null);
+  document.getElementById('certArea').innerHTML = '';
+  buildQuiz();
+  document.getElementById('qForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+const N = 9;
+function goTo(idx) {
+  document.querySelectorAll('.sec').forEach((s, i) => s.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+  const pct = Math.round(((idx + 1) / N) * 100);
+  document.getElementById('progBar').style.width = pct + '%';
+  document.getElementById('progLabel').textContent = `Module ${idx + 1} of ${N}`;
+  document.getElementById('progPct').textContent = pct + '%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuiz();
+</script>
+</body>
+</html>
